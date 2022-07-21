@@ -62,3 +62,22 @@ def login_post():
 def logout():
     del session["username"]
     return redirect("/")
+
+
+@app.route("/ingredients", methods=["GET"])
+def ingredients_get():
+    result = db.session.execute("SELECT name FROM ingredients")
+    ingredients = result.fetchall()
+    print(ingredients)
+    return render_template("ingredients.html", ingredients=ingredients)
+
+
+@app.route("/ingredients", methods=["POST"])
+def indgredients_post():
+    name = request.form["name"]
+    type = request.form["type"]
+    sql = "INSERT INTO ingredients (name, type) VALUES(:name, :type)"
+    db.session.execute(sql, {"name": name, "type": type})
+    db.session.commit()
+
+    return redirect("/ingredients")
