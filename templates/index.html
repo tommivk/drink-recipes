@@ -9,11 +9,16 @@
 </head>
 
 <body>
+    <a href="/ingredients">Ingredients</a>
+    {% if session.username %}
+    <a href="/logout">Logout</a>
+    {% else %}
+    <a href="/signup">Sign up</a>
+    {% endif %}
     <h1>Drink Club</h1>
 
     {%if session.username %}
     <p>Hello</p>
-    <a href="/logout">Logout</a>
     {%else%}
     <form action="/login" method="post">
         <input type="text" placeholder="username" name="username" />
