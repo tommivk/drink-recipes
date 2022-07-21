@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, request, session, redirect
+from flask import render_template, request, session, redirect, make_response
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from os import getenv
@@ -30,11 +30,6 @@ def signup():
         return render_template("index.html")
     else:
         return render_template("signup.html")
-
-
-@app.route("/login", methods=["GET"])
-def login_form():
-    return render_template("login_form.html")
 
 
 @app.route("/login", methods=["POST"])
@@ -81,3 +76,62 @@ def indgredients_post():
     db.session.commit()
 
     return redirect("/ingredients")
+
+
+@app.route("/drinks", methods=["GET"])
+def drinks_get():
+    result = db.session.execute("SELECT drinks.id as id, name, data as image FROM drinks JOIN images ON images.id = drinks.id")
+    drinks = result.fetchall()
+    result = db.session.execute("SELECT * FROM ingredients")
+    ingredients = result.fetchall()
+    return render_template("drinks.html", drinks=drinks, ingredients=ingredients)
+
+
+@app.route("/drinks", methods=["POST"])
+def drinks_post():
+    if "username" in session:
+        user = session["username"]
+    else:
+        return redirect("/")
+
+    name = request.form["name"]
+    recipe = request.form["recipe"]
+    description = request.form["description"]
+    ingredient_ids = request.form.getlist("ingredients")
+    file = request.files["picture"]
+
+    if not file.filename.endswith(".jpg"):
+        return "Invalid filetype"
+
+    image_data = file.read()
+    if len(image_data) > 200*1024:
+        return "Maximum filesize is 200kB"
+
+
+    sql = "SELECT id FROM users WHERE username=:user"
+    result = db.session.execute(sql, {"user": user})
+    user_id = result.fetchone()[0]
+
+    sql = "INSERT INTO Images (data) VALUES(:data) RETURNING id"
+    result = db.session.execute(sql, {"data": image_data})
+    image_id = result.fetchone()[0]
+
+    sql = "INSERT INTO Drinks (user_id, name, description, recipe, image_id) VALUES(:user_id, :name, :description, :recipe, :image_id) RETURNING id"
+    result = db.session.execute(sql, {"user_id": user_id, "name": name, "description": description, "recipe": recipe, "image_id": image_id})
+    drink_id = result.fetchone()[0]
+
+    for id in ingredient_ids:
+        sql = "INSERT INTO DrinkIngredients (drink_id, ingredient_id) VALUES(:drink_id, :ingredient_id)"
+        db.session.execute(sql, {"drink_id": drink_id, "ingredient_id": id})
+
+    db.session.commit()
+    return redirect("/drinks")
+
+@app.route("/images/<int:id>")
+def serve_img(id):
+    sql = "SELECT data FROM images WHERE id=:id"
+    result = db.session.execute(sql, {"id":id})
+    data = result.fetchone()[0]
+    response = make_response(bytes(data))
+    response.headers.set("Content-Type", "image/jpeg")
+    return response
