@@ -48,6 +48,7 @@ def login_post():
 
         if check_password_hash(hash, password):
             session["username"] = username
+            session["user_id"] = user.id
             return redirect("/")
         else:
             return "Invalid password"
