@@ -1,36 +1,26 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "layout.html" %}
+{% block title %}{{drink.name}}{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{drink.name}}</title>
-</head>
+{% block content %}
 
-<body>
-    <a href="/">Home</a>
-    <a href="/drinks">Drinks</a>
+<h1>{{drink.name}}</h1>
+<p>Uploaded by: {{author}}</p>
+{% if drink.image_id %}
+<img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
+{% endif %}
+<p>Rating: {{rating_data.rating}}/5 Ratings: {{rating_data.rating_count}}</p>
+<ul>
+    {% for ingredient in ingredients %}
+    <li>{{ ingredient.name }}</li>
+    {% endfor %}
+</ul>
+<p>{{drink.description}}</p>
+<p>{{drink.recipe}}</p>
 
-    <h1>{{drink.name}}</h1>
-    <p>Uploaded by: {{author}}</p>
-    {% if drink.image_id %}
-    <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
-    {% endif %}
-    <p>Rating: {{rating_data.rating}}/5 Ratings: {{rating_data.rating_count}}</p>
-    <ul>
-        {% for ingredient in ingredients %}
-        <li>{{ ingredient.name }}</li>
-        {% endfor %}
-    </ul>
-    <p>{{drink.description}}</p>
-    <p>{{drink.recipe}}</p>
+<form action="/drinks/{{drink.id}}/rate" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <input type="number" name="stars" />
+    <button type="submit">Submit</button>
+</form>
 
-    <form action="/drinks/{{drink.id}}/rate" method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <input type="number" name="stars" />
-        <button type="submit">Submit</button>
-    </form>
-</body>
-
-</html>
+{% endblock %}
