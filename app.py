@@ -80,7 +80,8 @@ def indgredients_post():
 
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
-    result = db.session.execute("SELECT drinks.id as id, name, data as image FROM drinks JOIN images ON images.id = drinks.id")
+    result = db.session.execute(
+        "SELECT id, name, image_id FROM drinks")
     drinks = result.fetchall()
     result = db.session.execute("SELECT * FROM ingredients")
     ingredients = result.fetchall()
@@ -107,7 +108,6 @@ def drinks_post():
     if len(image_data) > 200*1024:
         return "Maximum filesize is 200kB"
 
-
     sql = "SELECT id FROM users WHERE username=:user"
     result = db.session.execute(sql, {"user": user})
     user_id = result.fetchone()[0]
@@ -117,7 +117,8 @@ def drinks_post():
     image_id = result.fetchone()[0]
 
     sql = "INSERT INTO Drinks (user_id, name, description, recipe, image_id) VALUES(:user_id, :name, :description, :recipe, :image_id) RETURNING id"
-    result = db.session.execute(sql, {"user_id": user_id, "name": name, "description": description, "recipe": recipe, "image_id": image_id})
+    result = db.session.execute(sql, {"user_id": user_id, "name": name,
+                                "description": description, "recipe": recipe, "image_id": image_id})
     drink_id = result.fetchone()[0]
 
     for id in ingredient_ids:
@@ -127,10 +128,29 @@ def drinks_post():
     db.session.commit()
     return redirect("/drinks")
 
+
+@app.route("/drinks/<int:id>")
+def serve_drink(id):
+    sql = "SELECT * FROM drinks WHERE id=:id"
+    result = db.session.execute(sql, {"id": id})
+    drink = result.fetchone()
+    
+    sql = "SELECT name FROM DrinkIngredients JOIN ingredients ON ingredients.id=DrinkIngredients.ingredient_id WHERE drink_id =:id "
+    result = db.session.execute(sql, {"id": id})
+    ingredients = result.fetchall()
+
+    sql = "SELECT username FROM users WHERE id=:id"
+    result = db.session.execute(sql, {"id": drink.user_id})
+    author = result.fetchone()[0]
+    
+
+    return render_template("drink.html", drink=drink, ingredients=ingredients, author=author)
+
+
 @app.route("/images/<int:id>")
 def serve_img(id):
     sql = "SELECT data FROM images WHERE id=:id"
-    result = db.session.execute(sql, {"id":id})
+    result = db.session.execute(sql, {"id": id})
     data = result.fetchone()[0]
     response = make_response(bytes(data))
     response.headers.set("Content-Type", "image/jpeg")

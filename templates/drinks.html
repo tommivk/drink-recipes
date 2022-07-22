@@ -13,8 +13,10 @@
     <h1>Drinks</h1>
     {% for drink in drinks %}
     <div>
-        <img src="{{ url_for('serve_img', id=drink.id)}}" width="200">
-        <h3>{{drink.name}}</h3>
+        <a href="/drinks/{{drink.id}}">
+            <h3>{{drink.name}}</h3>
+            <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
+        </a>
     </div>
     {% endfor %}
     <form action="/drinks" method="post" enctype="multipart/form-data">

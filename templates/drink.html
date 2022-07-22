@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{drink.name}}</title>
+</head>
+
+<body>
+    <a href="/">Home</a>
+    <a href="/drinks">Drinks</a>
+
+    <h1>{{drink.name}}</h1>
+    <p>Uploaded by: {{author}}</p>
+    {% if drink.image_id %}
+    <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
+    {% endif %}
+    <ul>
+        {% for ingredient in ingredients %}
+        <li>{{ ingredient.name }}</li>
+        {% endfor %}
+    </ul>
+    <p>{{drink.description}}</p>
+    <p>{{drink.recipe}}</p>
+</body>
+
+</html>
