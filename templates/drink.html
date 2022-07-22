@@ -17,6 +17,7 @@
     {% if drink.image_id %}
     <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
     {% endif %}
+    <p>Rating: {{rating_data.rating}}/5 Ratings: {{rating_data.rating_count}}</p>
     <ul>
         {% for ingredient in ingredients %}
         <li>{{ ingredient.name }}</li>
@@ -24,6 +25,11 @@
     </ul>
     <p>{{drink.description}}</p>
     <p>{{drink.recipe}}</p>
+
+    <form action="/drinks/{{drink.id}}/rate" method="post">
+        <input type="number" name="stars" />
+        <button type="submit">Submit</button>
+    </form>
 </body>
 
 </html>

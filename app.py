@@ -135,17 +135,48 @@ def serve_drink(id):
     sql = "SELECT * FROM drinks WHERE id=:id"
     result = db.session.execute(sql, {"id": id})
     drink = result.fetchone()
-    
+
     sql = "SELECT name FROM DrinkIngredients JOIN ingredients ON ingredients.id=DrinkIngredients.ingredient_id WHERE drink_id =:id "
     result = db.session.execute(sql, {"id": id})
     ingredients = result.fetchall()
 
-    sql = "SELECT username FROM users WHERE id=:id"
-    result = db.session.execute(sql, {"id": drink.user_id})
+    sql = "SELECT username FROM users WHERE id=:author_id"
+    result = db.session.execute(sql, {"author_id": drink.user_id})
     author = result.fetchone()[0]
-    
 
-    return render_template("drink.html", drink=drink, ingredients=ingredients, author=author)
+    sql = "SELECT (cast(SUM(stars) as float) / COUNT(stars)) as rating, Count(*) as rating_count FROM Ratings WHERE drink_id=:drink_id"
+    result = db.session.execute(sql, {"drink_id": drink.id})
+    rating_data = result.fetchone()
+
+    return render_template("drink.html", drink=drink, ingredients=ingredients, author=author, rating_data=rating_data)
+
+
+@app.route("/drinks/<int:id>/rate", methods=["POST"])
+def add_review(id):
+    if "user_id" in session:
+        user_id = session["user_id"]
+    else:
+        redirect("/")
+
+    stars = int(request.form["stars"])
+
+    sql = "SELECT COUNT(*) FROM ratings WHERE user_id=:user_id AND drink_id=:drink_id"
+    result = db.session.execute(sql, {"user_id": user_id, "drink_id": id})
+    review_exists = int(result.fetchone()[0]) > 0
+
+    if stars not in range(1, 6):
+        return "Invalid amount of stars"
+
+    if review_exists:
+        sql = "UPDATE ratings SET stars=:stars WHERE user_id=:user_id AND drink_id=:drink_id"
+    else:
+        sql = "INSERT INTO ratings (user_id, drink_id, stars) VALUES(:user_id, :drink_id, :stars)"
+
+    db.session.execute(
+        sql, {"user_id": user_id, "drink_id": id, "stars": stars})
+    db.session.commit()
+
+    return redirect(f"/drinks/{id}")
 
 
 @app.route("/images/<int:id>")
