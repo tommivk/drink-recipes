@@ -1,4 +1,5 @@
-from flask import Flask
+import secrets
+from flask import Flask, abort
 from flask import render_template, request, session, redirect, make_response
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -49,6 +50,7 @@ def login_post():
         if check_password_hash(hash, password):
             session["username"] = username
             session["user_id"] = user.id
+            session["csrf_token"] = secrets.token_hex(16)
             return redirect("/")
         else:
             return "Invalid password"
@@ -70,6 +72,8 @@ def ingredients_get():
 
 @app.route("/ingredients", methods=["POST"])
 def indgredients_post():
+    check_csrf()
+
     name = request.form["name"]
     type = request.form["type"]
     sql = "INSERT INTO ingredients (name, type) VALUES(:name, :type)"
@@ -91,6 +95,8 @@ def drinks_get():
 
 @app.route("/drinks", methods=["POST"])
 def drinks_post():
+    check_csrf()
+
     if "username" in session:
         user = session["username"]
     else:
@@ -153,6 +159,8 @@ def serve_drink(id):
 
 @app.route("/drinks/<int:id>/rate", methods=["POST"])
 def add_review(id):
+    check_csrf()
+
     if "user_id" in session:
         user_id = session["user_id"]
     else:
@@ -187,3 +195,8 @@ def serve_img(id):
     response = make_response(bytes(data))
     response.headers.set("Content-Type", "image/jpeg")
     return response
+
+
+def check_csrf():
+    if session["csrf_token"] != request.form["csrf_token"]:
+        return abort(403)

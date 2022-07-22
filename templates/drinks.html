@@ -20,6 +20,7 @@
     </div>
     {% endfor %}
     <form action="/drinks" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <input type="text" placeholder="name" name="name" />
         <input type="text" placeholder="description" name="description" />
         <input type="text" placeholder="recipe" name="recipe" />

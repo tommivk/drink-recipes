@@ -27,6 +27,7 @@
     <p>{{drink.recipe}}</p>
 
     <form action="/drinks/{{drink.id}}/rate" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <input type="number" name="stars" />
         <button type="submit">Submit</button>
     </form>
