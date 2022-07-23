@@ -138,8 +138,11 @@ def drinks_post():
 
 @app.route("/drinks/<int:id>")
 def serve_drink(id):
-    sql = "SELECT * FROM drinks WHERE id=:id"
-    result = db.session.execute(sql, {"id": id})
+    if "user_id" in session:
+        user_id = session["user_id"]
+
+    sql = "SELECT *, (SELECT (Count(*) > 0) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id) as is_favourited FROM drinks WHERE id=:drink_id"
+    result = db.session.execute(sql, {"drink_id": id, "user_id": user_id})
     drink = result.fetchone()
 
     sql = "SELECT name FROM DrinkIngredients JOIN ingredients ON ingredients.id=DrinkIngredients.ingredient_id WHERE drink_id =:id "
@@ -185,6 +188,47 @@ def add_review(id):
     db.session.commit()
 
     return redirect(f"/drinks/{id}")
+
+
+@app.route("/drinks/<int:id>/favourite", methods=["POST"])
+def favourite_drink(id):
+    check_csrf()
+
+    if "user_id" in session:
+        user_id = session["user_id"]
+    else:
+        redirect("/")
+
+    sql = "SELECT COUNT(*) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id"
+    result = db.session.execute(sql, {"user_id": user_id, "drink_id": id})
+
+    is_favourited = result.fetchone()[0] > 0
+
+    if is_favourited:
+        return "Error"
+    else:
+        sql = "INSERT INTO FavouriteDrinks (user_id, drink_id) VALUES(:user_id, :drink_id)"
+        db.session.execute(sql, {"user_id": user_id, "drink_id": id})
+        db.session.commit()
+
+    return redirect(f"/drinks/{id}")
+
+
+@app.route("/drinks/<int:id>/favourite/delete", methods=["POST"])
+def favourite_drink_delete(id):
+    check_csrf()
+    if "user_id" in session:
+        user_id = session["user_id"]
+    else:
+        redirect("/")
+
+    username = session["username"]
+
+    sql = "DELETE FROM FavouriteDrinks WHERE drink_id=:drink_id AND user_id=:user_id"
+    db.session.execute(sql, {"user_id": user_id, "drink_id": id})
+    db.session.commit()
+
+    return redirect(f"/{username}")
 
 
 @app.route("/images/<int:id>")

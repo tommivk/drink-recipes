@@ -8,6 +8,14 @@
 {% if drink.image_id %}
 <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
 {% endif %}
+
+<form action="/drinks/{{drink.id}}/favourite" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    {% if session.username and not drink.is_favourited %}
+    <button type="submit">Add to favourites</button>
+    {% endif %}
+</form>
+
 <p>Rating: {{rating_data.rating}}/5 Ratings: {{rating_data.rating_count}}</p>
 <ul>
     {% for ingredient in ingredients %}
