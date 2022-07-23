@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+{% block title %}{{username}}{% endblock %}
+
+{% block content %}
+<h1>{{username}}</h1>
+<h2>Favourited drinks</h2>
+{% for drink in favourite_drinks %}
+<div>
+    <a href="/drinks/{{drink.id}}">
+        <h3>{{drink.name}}</h3>
+        <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
+    </a>
+    <form action="/drinks/{{drink.id}}/favourite/delete" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        {% if username == session.username %}
+        <button type="submit">X</button>
+        {% endif %}
+    </form>
+</div>
+{% endfor %}
+{% endblock %}

@@ -241,6 +241,14 @@ def serve_img(id):
     return response
 
 
+@app.route("/<string:username>")
+def profile_page(username):
+    sql = "SELECT D.id as id, D.name as name, D.image_id as image_id FROM FavouriteDrinks F JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)"
+    response = db.session.execute(sql, {"username": username})
+    favourite_drinks = response.fetchall()
+    return render_template("profile_page.html", username=username, favourite_drinks=favourite_drinks)
+
+
 def check_csrf():
     if session["csrf_token"] != request.form["csrf_token"]:
         return abort(403)
