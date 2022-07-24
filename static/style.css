@@ -3,7 +3,7 @@
     --fill: gold;
     --fillbg: rgba(100, 100, 100, 0.15);
     --icon-size: 30px;
-    --rating: 1;
+    --rating: 0;
     --rating-box-width: 160px;
     --x: calc(var(--rating-box-width) * (var(--rating) / 5));
     --icon-backround: linear-gradient(to right,
