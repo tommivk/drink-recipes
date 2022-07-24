@@ -1,4 +1,5 @@
 import secrets
+from datetime import datetime
 from flask import Flask, abort
 from flask import render_template, request, session, redirect, make_response
 from flask_sqlalchemy import SQLAlchemy
@@ -123,9 +124,9 @@ def drinks_post():
     result = db.session.execute(sql, {"data": image_data})
     image_id = result.fetchone()[0]
 
-    sql = "INSERT INTO Drinks (user_id, name, description, recipe, image_id) VALUES(:user_id, :name, :description, :recipe, :image_id) RETURNING id"
+    sql = "INSERT INTO Drinks (user_id, name, description, recipe, image_id, timestamp) VALUES(:user_id, :name, :description, :recipe, :image_id, :timestamp) RETURNING id"
     result = db.session.execute(sql, {"user_id": user_id, "name": name,
-                                "description": description, "recipe": recipe, "image_id": image_id})
+                                "description": description, "recipe": recipe, "image_id": image_id, "timestamp": datetime.now()})
     drink_id = result.fetchone()[0]
 
     for id in ingredient_ids:
