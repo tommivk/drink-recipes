@@ -98,8 +98,8 @@ def drinks_get():
 def drinks_post():
     check_csrf()
 
-    if "username" in session:
-        user = session["username"]
+    if "user_id" in session:
+        user_id = session["user_id"]
     else:
         return redirect("/")
 
@@ -115,10 +115,6 @@ def drinks_post():
     image_data = file.read()
     if len(image_data) > 200*1024:
         return "Maximum filesize is 200kB"
-
-    sql = "SELECT id FROM users WHERE username=:user"
-    result = db.session.execute(sql, {"user": user})
-    user_id = result.fetchone()[0]
 
     sql = "INSERT INTO Images (data) VALUES(:data) RETURNING id"
     result = db.session.execute(sql, {"data": image_data})
