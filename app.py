@@ -74,6 +74,7 @@ def ingredients_get():
 @app.route("/ingredients", methods=["POST"])
 def indgredients_post():
     check_csrf()
+    # TODO check if admin
 
     name = request.form["name"]
     type = request.form["type"]
@@ -86,12 +87,15 @@ def indgredients_post():
 
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
-    result = db.session.execute(
-        "SELECT id, name, image_id FROM drinks")
-    drinks = result.fetchall()
-    result = db.session.execute("SELECT * FROM ingredients")
-    ingredients = result.fetchall()
-    return render_template("drinks.html", drinks=drinks, ingredients=ingredients)
+    drinks = db.session.execute(
+        "SELECT id, name, image_id FROM drinks").fetchall()
+
+    ingredients = db.session.execute("SELECT * FROM ingredients").fetchall()
+
+    categories = db.session.execute(
+        "SELECT id, name FROM DrinkCategories").fetchall()
+
+    return render_template("drinks.html", drinks=drinks, ingredients=ingredients, categories=categories)
 
 
 @app.route("/drinks", methods=["POST"])
@@ -107,6 +111,7 @@ def drinks_post():
     recipe = request.form["recipe"]
     description = request.form["description"]
     ingredient_ids = request.form.getlist("ingredients")
+    category_id = request.form["category"]
     file = request.files["picture"]
 
     if not file.filename.endswith(".jpg"):
@@ -120,9 +125,11 @@ def drinks_post():
     result = db.session.execute(sql, {"data": image_data})
     image_id = result.fetchone()[0]
 
-    sql = "INSERT INTO Drinks (user_id, name, description, recipe, image_id, timestamp) VALUES(:user_id, :name, :description, :recipe, :image_id, :timestamp) RETURNING id"
-    result = db.session.execute(sql, {"user_id": user_id, "name": name,
-                                "description": description, "recipe": recipe, "image_id": image_id, "timestamp": datetime.now()})
+    sql = '''INSERT INTO Drinks (user_id, name, description, recipe, image_id, category_id, timestamp) 
+             VALUES(:user_id, :name, :description, :recipe, :image_id, :category_id, :timestamp) RETURNING id'''
+    result = db.session.execute(sql, {"user_id": user_id, "name": name, "description": description,
+                                      "recipe": recipe, "image_id": image_id,
+                                      "category_id": category_id, "timestamp": datetime.now()})
     drink_id = result.fetchone()[0]
 
     for id in ingredient_ids:
@@ -133,28 +140,42 @@ def drinks_post():
     return redirect("/drinks")
 
 
+@app.route("/drinks/categories", methods=["POST"])
+def add_drink_category():
+    check_csrf()
+    # TODO check if admin
+    name = request.form["name"]
+    description = request.form["description"]
+
+    sql = "INSERT INTO DrinkCategories (name, description) VALUES(:name, :description)"
+    db.session.execute(
+        sql, {"name": name, "description": description})
+    db.session.commit()
+
+    return redirect("/drinks")
+
+
 @app.route("/drinks/<int:id>")
 def serve_drink(id):
     if "user_id" in session:
         user_id = session["user_id"]
 
-    sql = "SELECT *, (SELECT (Count(*) > 0) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id) as is_favourited FROM drinks WHERE id=:drink_id"
-    result = db.session.execute(sql, {"drink_id": id, "user_id": user_id})
-    drink = result.fetchone()
+    sql = '''SELECT D.id, image_id, D.name, DC.name as category, D.description, recipe, timestamp, username as author,
+                (SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) as rating FROM Ratings R WHERE R.drink_id = D.id),
+                (SELECT Count(*) as rating_count FROM Ratings R WHERE R.drink_id = D.id),
+                (SELECT (Count(*) > 0) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id) as is_favourited
+                FROM drinks D
+                JOIN Users U ON U.id = D.user_id
+                JOIN DrinkCategories DC ON DC.id = D.category_id
+                WHERE D.id=:drink_id
+            '''
+    drink = db.session.execute(
+        sql, {"drink_id": id, "user_id": user_id}).fetchone()
 
     sql = "SELECT name FROM DrinkIngredients JOIN ingredients ON ingredients.id=DrinkIngredients.ingredient_id WHERE drink_id =:id "
-    result = db.session.execute(sql, {"id": id})
-    ingredients = result.fetchall()
+    ingredients = db.session.execute(sql, {"id": id}).fetchall()
 
-    sql = "SELECT username FROM users WHERE id=:author_id"
-    result = db.session.execute(sql, {"author_id": drink.user_id})
-    author = result.fetchone()[0]
-
-    sql = "SELECT (cast(SUM(stars) as float) / COUNT(stars)) as rating, Count(*) as rating_count FROM Ratings WHERE drink_id=:drink_id"
-    result = db.session.execute(sql, {"drink_id": drink.id})
-    rating_data = result.fetchone()
-
-    return render_template("drink.html", drink=drink, ingredients=ingredients, author=author, rating_data=rating_data)
+    return render_template("drink.html", drink=drink, ingredients=ingredients)
 
 
 @app.route("/drinks/<int:id>/rate", methods=["POST"])

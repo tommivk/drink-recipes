@@ -16,6 +16,11 @@
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <input type="text" placeholder="name" name="name" />
     <input type="text" placeholder="description" name="description" />
+    <select name="category">
+        {% for category in categories %}
+        <option value="{{ category.id }}"> {{ category.name }}
+            {% endfor %}
+    </select>
     <input type="text" placeholder="recipe" name="recipe" />
     <input type="file" name="picture" />
     <select name="ingredients" multiple>
@@ -23,6 +28,14 @@
         <option name="options" value="{{ ingredient.id }}"> {{ ingredient.name }}
             {% endfor %}
     </select>
+    <button type="submit">Add</button>
+</form>
+
+Add new drink category
+<form action="/drinks/categories" method="post">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+    <input type="text" placeholder="name" name="name" />
+    <input type="text" placeholder="description" name="description" />
     <button type="submit">Add</button>
 </form>
 
