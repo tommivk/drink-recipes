@@ -87,8 +87,10 @@ def indgredients_post():
 
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
-    drinks = db.session.execute(
-        "SELECT id, name, image_id FROM drinks").fetchall()
+    drinks = db.session.execute('''SELECT id, name, description, image_id, 
+                                    COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) 
+                                    FROM Ratings R WHERE R.drink_id = D.id), 0) as rating 
+                                    FROM drinks D''').fetchall()
 
     ingredients = db.session.execute("SELECT * FROM ingredients").fetchall()
 
@@ -261,7 +263,11 @@ def serve_img(id):
 
 @app.route("/<string:username>")
 def profile_page(username):
-    sql = "SELECT D.id as id, D.name as name, D.image_id as image_id FROM FavouriteDrinks F JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)"
+    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id, 
+                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
+                FROM FavouriteDrinks F 
+                JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
+            '''
     response = db.session.execute(sql, {"username": username})
     favourite_drinks = response.fetchall()
     return render_template("profile_page.html", username=username, favourite_drinks=favourite_drinks)

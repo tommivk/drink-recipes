@@ -23,9 +23,22 @@
     cursor: pointer;
 }
 
+.stars.card-stars {
+    --x: calc(80px * (var(--rating) / 5));
+    background: linear-gradient(to right,
+            var(--fill) 0 var(--x),
+            var(--fillbg) 0 var(--x));
+}
+
+
 .star {
     width: 32px;
     height: 30px;
+}
+
+.card-stars {
+    height: 15px;
+    width: 80px;
 }
 
 .stars:hover>.star {
@@ -34,4 +47,77 @@
 
 .star:hover~.star {
     background: none;
+}
+
+.recipe-cards {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.card {
+    width: 300px;
+    max-width: 100vw;
+    height: 380px;
+    margin: 20px;
+    position: relative;
+}
+
+.card:hover {
+    transform: scale(1.02);
+    transition: transform 0.3s;
+}
+
+.card a {
+    position: absolute;
+    display: block;
+    height: 100%;
+    width: 100%;
+}
+
+.card img {
+    width: 300px;
+    height: 220px;
+    display: block;
+    object-fit: cover;
+}
+
+.card .card-content .card-rating .stars {
+    pointer-events: none;
+}
+
+.card-content {
+    width: 300px;
+    height: 160px;
+    padding: 10px;
+    box-sizing: border-box;
+    border: 1px solid rgba(100, 95, 95, 0.4);
+    border-top: none;
+}
+
+.card-title {
+    margin: 0px;
+    text-align: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-rating {
+    margin: 5px 0px 10px 0px;
+}
+
+.card-description {
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+}
+
+.remove-fav-btn {
+    z-index: 10;
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    cursor: pointer;
 }

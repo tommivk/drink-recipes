@@ -4,14 +4,31 @@
 {% block content %}
 
 <h1>Drinks</h1>
-{% for drink in drinks %}
-<div>
-    <a href="/drinks/{{drink.id}}">
-        <h3>{{drink.name}}</h3>
+
+<div class="recipe-cards">
+    {% for drink in drinks %}
+    <div class="card">
+        <a href="/drinks/{{drink.id}}"></a>
         <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
-    </a>
+        <div class="card-content">
+            <h3 class="card-title">{{drink.name}}</h3>
+            <div class="card-rating">
+                <div class="stars card-stars" style="--rating: {{drink.rating}}">
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                </div>
+            </div>
+            <div class="card-description">
+                {{drink.description}}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
 </div>
-{% endfor %}
+
 <form action="/drinks" method="post" enctype="multipart/form-data">
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     <input type="text" placeholder="name" name="name" />
