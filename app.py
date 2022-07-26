@@ -177,7 +177,45 @@ def serve_drink(id):
     sql = "SELECT name FROM DrinkIngredients JOIN ingredients ON ingredients.id=DrinkIngredients.ingredient_id WHERE drink_id =:id "
     ingredients = db.session.execute(sql, {"id": id}).fetchall()
 
-    return render_template("drink.html", drink=drink, ingredients=ingredients)
+    comments = db.session.execute(
+        "SELECT C.id, C.comment, TO_CHAR(C.timestamp, 'DD/MM/YYYY HH:MI') as date, username FROM Comments C JOIN Users U ON U.id = C.user_id WHERE drink_id=:drink_id ORDER BY timestamp DESC", {"drink_id": id}).fetchall()
+
+    return render_template("drink.html", drink=drink, ingredients=ingredients, comments=comments)
+
+
+@app.route("/drinks/<int:id>/comment", methods=["POST"])
+def add_comment(id):
+    (_username, user_id) = get_logged_user()
+    check_csrf()
+
+    comment = request.form["comment"].strip()
+    if comment != "":
+        sql = "INSERT INTO Comments (user_id, drink_id, comment, timestamp) VALUES(:user_id, :drink_id, :comment, :timestamp)"
+        db.session.execute(sql, {"user_id": user_id, "drink_id": id,
+                           "comment": comment, "timestamp": datetime.now()})
+        db.session.commit()
+
+    return redirect(f"/drinks/{id}")
+
+
+@app.route("/drinks/<int:drink_id>/comment/delete", methods=["POST"])
+def delete_comment(drink_id):
+    (_username, user_id) = get_logged_user()
+    check_csrf()
+
+    comment_id = request.form["comment_id"]
+
+    comment_author = db.session.execute("SELECT user_id FROM Comments WHERE id=:comment_id", {
+                                        "comment_id": comment_id}).fetchone()[0]
+
+    if user_id != comment_author:
+        return abort(403)
+
+    db.session.execute("DELETE FROM Comments WHERE id=:comment_id", {
+                       "comment_id": comment_id})
+    db.session.commit()
+
+    return redirect(f"/drinks/{drink_id}")
 
 
 @app.route("/drinks/<int:id>/rate", methods=["POST"])
