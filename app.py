@@ -60,6 +60,8 @@ def login_post():
 @app.route("/logout")
 def logout():
     del session["username"]
+    del session["user_id"]
+    del session["csrf_token"]
     return redirect("/")
 
 
