@@ -24,6 +24,7 @@ def signup():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        # TODO validate_credentials()
         hash = generate_password_hash(password)
         sql = "INSERT INTO Users (username, password_hash) VALUES(:username, :password_hash)"
         db.session.execute(sql, {"username": username, "password_hash": hash})
@@ -67,6 +68,7 @@ def logout():
 
 @app.route("/ingredients", methods=["GET"])
 def ingredients_get():
+    get_logged_user()
     result = db.session.execute("SELECT name FROM ingredients")
     ingredients = result.fetchall()
     print(ingredients)
@@ -89,6 +91,7 @@ def indgredients_post():
 
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
+    get_logged_user()
     drinks = db.session.execute('''SELECT id, name, description, image_id,
                                     COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
                                     FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
@@ -104,12 +107,8 @@ def drinks_get():
 
 @app.route("/drinks", methods=["POST"])
 def drinks_post():
+    (_username, user_id) = get_logged_user()
     check_csrf()
-
-    if "user_id" in session:
-        user_id = session["user_id"]
-    else:
-        return redirect("/")
 
     name = request.form["name"]
     recipe = request.form["recipe"]
@@ -161,8 +160,7 @@ def add_drink_category():
 
 @app.route("/drinks/<int:id>")
 def serve_drink(id):
-    if "user_id" in session:
-        user_id = session["user_id"]
+    (_username, user_id) = get_logged_user()
 
     sql = '''SELECT D.id, image_id, D.name, DC.name as category, D.description, recipe, timestamp, username as author,
                 (SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) as rating FROM Ratings R WHERE R.drink_id = D.id),
@@ -184,12 +182,8 @@ def serve_drink(id):
 
 @app.route("/drinks/<int:id>/rate", methods=["POST"])
 def add_review(id):
+    (_username, user_id) = get_logged_user()
     check_csrf()
-
-    if "user_id" in session:
-        user_id = session["user_id"]
-    else:
-        redirect("/")
 
     stars = int(request.form["stars"])
 
@@ -214,12 +208,8 @@ def add_review(id):
 
 @app.route("/drinks/<int:id>/favourite", methods=["POST"])
 def favourite_drink(id):
+    (_username, user_id) = get_logged_user()
     check_csrf()
-
-    if "user_id" in session:
-        user_id = session["user_id"]
-    else:
-        redirect("/")
 
     sql = "SELECT COUNT(*) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id"
     result = db.session.execute(sql, {"user_id": user_id, "drink_id": id})
@@ -238,13 +228,8 @@ def favourite_drink(id):
 
 @app.route("/drinks/<int:id>/favourite/delete", methods=["POST"])
 def favourite_drink_delete(id):
+    (username, user_id) = get_logged_user()
     check_csrf()
-    if "user_id" in session:
-        user_id = session["user_id"]
-    else:
-        redirect("/")
-
-    username = session["username"]
 
     sql = "DELETE FROM FavouriteDrinks WHERE drink_id=:drink_id AND user_id=:user_id"
     db.session.execute(sql, {"user_id": user_id, "drink_id": id})
@@ -265,6 +250,7 @@ def serve_img(id):
 
 @app.route("/<string:username>")
 def profile_page(username):
+    get_logged_user()
     sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
                 COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
                 FROM FavouriteDrinks F
