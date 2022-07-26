@@ -89,9 +89,9 @@ def indgredients_post():
 
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
-    drinks = db.session.execute('''SELECT id, name, description, image_id, 
-                                    COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) 
-                                    FROM Ratings R WHERE R.drink_id = D.id), 0) as rating 
+    drinks = db.session.execute('''SELECT id, name, description, image_id,
+                                    COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
+                                    FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
                                     FROM drinks D''').fetchall()
 
     ingredients = db.session.execute("SELECT * FROM ingredients").fetchall()
@@ -129,7 +129,7 @@ def drinks_post():
     result = db.session.execute(sql, {"data": image_data})
     image_id = result.fetchone()[0]
 
-    sql = '''INSERT INTO Drinks (user_id, name, description, recipe, image_id, category_id, timestamp) 
+    sql = '''INSERT INTO Drinks (user_id, name, description, recipe, image_id, category_id, timestamp)
              VALUES(:user_id, :name, :description, :recipe, :image_id, :category_id, :timestamp) RETURNING id'''
     result = db.session.execute(sql, {"user_id": user_id, "name": name, "description": description,
                                       "recipe": recipe, "image_id": image_id,
@@ -265,14 +265,79 @@ def serve_img(id):
 
 @app.route("/<string:username>")
 def profile_page(username):
-    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id, 
+    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
                 COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                FROM FavouriteDrinks F 
+                FROM FavouriteDrinks F
                 JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
             '''
     response = db.session.execute(sql, {"username": username})
     favourite_drinks = response.fetchall()
     return render_template("profile_page.html", username=username, favourite_drinks=favourite_drinks)
+
+
+@app.route("/<string:username>/ingredients", methods=["GET"])
+def user_ingredients(username):
+    (user, user_id) = get_logged_user()
+
+    if username != user:
+        return abort(403)
+
+    sql = "SELECT * FROM Ingredients WHERE id NOT IN (SELECT ingredient_id FROM UsersIngredients WHERE user_id=:user_id)"
+    ingredients = db.session.execute(sql, {"user_id": user_id}).fetchall()
+
+    sql = "SELECT * FROM UsersIngredients U JOIN Ingredients I ON U.ingredient_id=I.id WHERE U.user_id=:user_id"
+    users_ingredients = db.session.execute(
+        sql, {"user_id": user_id}).fetchall()
+
+    return render_template("user_ingredients.html", ingredients=ingredients, users_ingredients=users_ingredients)
+
+
+@app.route("/<string:username>/ingredients", methods=["POST"])
+def favourite_ingredient(username):
+    (user, user_id) = get_logged_user()
+    check_csrf()
+
+    if username != user:
+        return abort(403)
+
+    ingredient_id = request.form["ingredient"]
+
+    sql = "INSERT INTO UsersIngredients(user_id, ingredient_id) VALUES(:user_id, :ingredient_id)"
+    db.session.execute(
+        sql, {"user_id": user_id, "ingredient_id": ingredient_id})
+    db.session.commit()
+
+    return redirect(f"/{username}/ingredients")
+
+
+@app.route("/<string:username>/ingredients/delete", methods=["POST"])
+def delete_favourite_ingredient(username):
+    (user, user_id) = get_logged_user()
+    check_csrf()
+
+    if username != user:
+        return abort(403)
+
+    ingredient_id = request.form["ingredient"]
+
+    sql = "DELETE FROM UsersIngredients WHERE ingredient_id=:ingredient_id AND user_id=:user_id"
+    db.session.execute(
+        sql, {"ingredient_id": ingredient_id, "user_id": user_id})
+    db.session.commit()
+
+    return redirect(f"/{username}/ingredients")
+
+
+def get_logged_user():
+    if "username" not in session or "user_id" not in session:
+        return abort(401)
+    else:
+        return (session["username"], session["user_id"])
+
+
+@app.errorhandler(401)
+def not_logged_in(e):
+    return render_template('index.html'), 401
 
 
 def check_csrf():

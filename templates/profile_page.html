@@ -4,6 +4,10 @@
 {% block content %}
 <h1>{{username}}</h1>
 
+{% if username == session.username %}
+<a href="/{{username}}/ingredients">My ingredients</a>
+{% endif %}
+
 <h2>Favourited drinks</h2>
 
 <div class="recipe-cards">
