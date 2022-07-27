@@ -343,9 +343,10 @@ def favourite_drink_delete(id):
 @app.route("/images/<int:id>")
 def serve_img(id):
     sql = "SELECT data FROM images WHERE id=:id"
-    result = db.session.execute(sql, {"id": id})
-    data = result.fetchone()[0]
-    response = make_response(bytes(data))
+    data = db.session.execute(sql, {"id": id}).fetchone()
+    if not data:
+        return abort(404)
+    response = make_response(bytes(data[0]))
     response.headers.set("Content-Type", "image/jpeg")
     return response
 
