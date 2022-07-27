@@ -1,4 +1,5 @@
 import secrets
+import re
 from datetime import datetime
 from flask import Flask, abort
 from flask import render_template, request, session, redirect, make_response
@@ -24,7 +25,23 @@ def signup():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        # TODO validate_credentials()
+
+        if len(username) < 3 or len(username) > 20:
+            return "Username should be between 3 and 20 characters long"
+
+        if len(password) < 6:
+            return "Password should be minimum of 6 characters long"
+
+        pattern = re.compile("^[a-zA-Z0-9åäöÅÄÖ]*$")
+
+        if not pattern.match(username):
+            return "Username contains invalid characters"
+
+        username_exists = db.session.execute(
+            "SELECT 1 FROM Users WHERE username=:username", {"username": username}).fetchone()
+        if username_exists:
+            return "Username already exists"
+
         hash = generate_password_hash(password)
         sql = "INSERT INTO Users (username, password_hash) VALUES(:username, :password_hash)"
         db.session.execute(sql, {"username": username, "password_hash": hash})
@@ -224,7 +241,7 @@ def delete_comment(drink_id):
     comment_id = request.form["comment_id"]
 
     comment_author = db.session.execute("SELECT user_id FROM Comments WHERE id=:comment_id", {
-                                        "comment_id": comment_id}).fetchone()[0]
+        "comment_id": comment_id}).fetchone()[0]
 
     if user_id != comment_author:
         return abort(403)
