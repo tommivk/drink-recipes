@@ -3,43 +3,48 @@
 
 {% block content %}
 <div class="drink-form-container">
-    <h2>ADD NEW DRINK RECIPE</h2>
+    <h2>ADD NEW <span class="gradient-text">DRINK RECIPE</span></h2>
     <form class="drink-form" id="drinkForm" action="/drinks" method="post" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <input type="file" accept="image/*" name="picture" id="imageInput" />
-        <label for="imageInput" class="image-input-label">
-            Upload Image
-            <img id="imagePreview" src="" alt="" />
-        </label>
-        <label>Name</label>
-        <input type="text" name="name" />
-        <label>Description</label>
-        <input type="text" name="description" />
-        <label>Category</label>
-        <select class="form-select" name="category">
-            {% for category in categories %}
-            <option value="{{ category.id }}"> {{ category.name }}
-                {% endfor %}
-        </select>
-        <label>Ingredients</label>
-        <ul id="selectedIngredients"></ul>
-
-        {% for ingredient in ingredients %}
-        <input type="checkbox" hidden id="ingredientOption" name="ingredients" value="{{ ingredient.id }}"></input>
-        {% endfor %}
-
-        <div class="ingredient-select-wrapper">
-            <select class="form-select" id="ingredientSelect">
-                {% for ingredient in ingredients %}
-                <option id="ingredientOption" name="options" value="{{ ingredient.id }}"> {{ ingredient.name }}
-                </option>
-                {% endfor %}
-            </select>
-            <button class="add-ingredient-btn" onclick="addIngredient()" type="button">Add ingredient</button>
+        <div class="form-left">
+            <input type="file" accept="image/*" name="picture" id="imageInput" />
+            <label for="imageInput" class="image-input-label">
+                Upload Image
+                <img id="imagePreview" src="" alt="" />
+            </label>
+            <ul id="selectedIngredients"></ul>
         </div>
-        <label>Instructions</label>
-        <textarea rows="5" type="text" name="recipe"></textarea>
-        <button class="form-submit-btn" type="submit">Submit</button>
+        <div class="form-right">
+            <label>Name</label>
+            <input type="text" name="name" />
+            <label>Description</label>
+            <input type="text" name="description" />
+            <label>Category</label>
+            <select class="form-select" name="category">
+                {% for category in categories %}
+                <option value="{{ category.id }}"> {{ category.name }}
+                    {% endfor %}
+            </select>
+            <label>Ingredients</label>
+
+            {% for ingredient in ingredients %}
+            <input type="checkbox" hidden id="ingredientOption" name="ingredients" value="{{ ingredient.id }}"></input>
+            {% endfor %}
+
+            <div class="ingredient-select-wrapper">
+                <select class="form-select" id="ingredientSelect">
+                    {% for ingredient in ingredients %}
+                    <option id="ingredientOption" name="options" value="{{ ingredient.id }}"> {{ ingredient.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <button class="add-ingredient-btn" onclick="addIngredient()" type="button">Add ingredient</button>
+            </div>
+
+            <label>Instructions</label>
+            <textarea rows="7" type="text" name="recipe"></textarea>
+            <button class="form-submit-btn" type="submit">Submit</button>
+        </div>
     </form>
 </div>
 
