@@ -331,7 +331,14 @@ def profile_page(username):
             '''
     response = db.session.execute(sql, {"username": username})
     favourite_drinks = response.fetchall()
-    return render_template("profile_page.html", username=username, favourite_drinks=favourite_drinks)
+
+    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
+                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
+                FROM Drinks D JOIN Users U on U.id = D.user_id WHERE U.username=:username
+            '''
+    uploaded_drinks = db.session.execute(
+        sql, {"username": username}).fetchall()
+    return render_template("profile_page.html", username=username, favourite_drinks=favourite_drinks, uploaded_drinks=uploaded_drinks)
 
 
 @app.route("/<string:username>/ingredients", methods=["GET"])
