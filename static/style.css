@@ -11,6 +11,10 @@
             var(--fillbg) 0 var(--x));
 }
 
+body {
+    margin: 0px;
+}
+
 .stars {
     display: flex;
     width: var(--rating-box-width);
@@ -29,7 +33,6 @@
             var(--fill) 0 var(--x),
             var(--fillbg) 0 var(--x));
 }
-
 
 .star {
     width: 32px;
@@ -143,4 +146,187 @@
 
 .add-recipe-button {
     float: right;
+}
+
+.drink-form-container {
+    width: 500px;
+    max-width: 100vw;
+    min-height: 600px;
+    margin: auto;
+    background: rgb(7, 7, 51);
+    padding: 20px;
+    margin-top: 50px;
+    border-radius: 15px;
+}
+
+.drink-form-container h2 {
+    color: white;
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+input[type="file"] {
+    opacity: 0;
+}
+
+.image-input-label {
+    border: 1px solid #ccc;
+    display: block;
+    height: 200px;
+    width: 200px;
+    margin: auto;
+    cursor: pointer;
+    position: relative;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+input[type="file"]:focus+label,
+input[type="file"]:hover+label {
+    box-shadow: 0px 0px 3px white;
+}
+
+#imagePreview {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 200px;
+    height: 200px;
+    object-fit: cover;
+}
+
+.drink-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.drink-form label:not(.image-input-label) {
+    color: white;
+    margin-left: 40px;
+    margin-top: 20px;
+}
+
+.drink-form>input[type=text] {
+    padding: 10px;
+    margin: auto;
+    background: none;
+    border: none;
+    border-bottom: 1px solid white;
+    color: white;
+    width: 80%;
+}
+
+.drink-form>select,
+#ingredientSelect {
+    padding: 10px;
+    margin-top: 10px;
+    margin-left: 40px;
+    background: none;
+    width: fit-content;
+    border: none;
+    border: 1px solid white;
+    border-radius: 5px;
+    color: white;
+}
+
+.drink-form>select:focus,
+#ingredientSelect:focus {
+    outline: none;
+}
+
+.form-select>option {
+    background: rgb(7, 7, 51);
+}
+
+.drink-form>input[type=text]:focus {
+    outline: none;
+    border-bottom: 1px solid rgb(31, 218, 231);
+}
+
+.form-select:focus,
+#ingredientSelect:focus {
+    box-shadow: 0px 0px 3px white;
+}
+
+#selectedIngredients {
+    color: white;
+    margin-left: 20px;
+    margin-bottom: 0px;
+}
+
+#selectedIngredients li {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+#selectedIngredients:empty {
+    margin-top: 0px;
+    margin-bottom: 5px;
+}
+
+.ingredient-select-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.drink-form textarea {
+    background: none;
+    color: white;
+    border: none;
+    border-bottom: 1px solid white;
+    width: 80%;
+    margin: auto;
+    margin-top: 10px;
+}
+
+.drink-form textarea:focus {
+    outline: none;
+    border-bottom: 1px solid rgb(31, 218, 231);
+}
+
+.add-ingredient-btn,
+.form-selected-ingredient button {
+    height: 20px;
+    width: fit-content;
+    margin-left: 10px;
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    border: 1px solid rgb(97, 88, 88);
+    border-radius: 5px;
+}
+
+
+.form-submit-btn {
+    width: 300px;
+    height: 40px;
+    margin: auto;
+    margin-top: 30px;
+    border-radius: 10px;
+    cursor: pointer;
+    border: none;
+    color: white;
+    background: rgb(33, 160, 171);
+    background: linear-gradient(52deg, rgba(33, 160, 171, 1) 0%, rgba(3, 242, 169, 1) 100%);
+}
+
+.form-submit-btn:hover {
+    outline: 1px solid rgb(110, 105, 105);
+
+}
+
+.form-selected-ingredient {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 160px;
+}
+
+.hidden {
+    display: none;
+    background: red;
 }

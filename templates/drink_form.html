@@ -1,0 +1,90 @@
+{% extends "layout.html" %}
+{% block title %}Add new drink{% endblock %}
+
+{% block content %}
+<div class="drink-form-container">
+    <h2>ADD NEW DRINK RECIPE</h2>
+    <form class="drink-form" id="drinkForm" action="/drinks" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <input type="file" accept="image/*" name="picture" id="imageInput" />
+        <label for="imageInput" class="image-input-label">
+            Upload Image
+            <img id="imagePreview" src="" alt="" />
+        </label>
+        <label>Name</label>
+        <input type="text" name="name" />
+        <label>Description</label>
+        <input type="text" name="description" />
+        <label>Category</label>
+        <select class="form-select" name="category">
+            {% for category in categories %}
+            <option value="{{ category.id }}"> {{ category.name }}
+                {% endfor %}
+        </select>
+        <label>Ingredients</label>
+        <ul id="selectedIngredients"></ul>
+
+        {% for ingredient in ingredients %}
+        <input type="checkbox" hidden id="ingredientOption" name="ingredients" value="{{ ingredient.id }}"></input>
+        {% endfor %}
+
+        <div class="ingredient-select-wrapper">
+            <select class="form-select" id="ingredientSelect">
+                {% for ingredient in ingredients %}
+                <option id="ingredientOption" name="options" value="{{ ingredient.id }}"> {{ ingredient.name }}
+                </option>
+                {% endfor %}
+            </select>
+            <button class="add-ingredient-btn" onclick="addIngredient()" type="button">Add ingredient</button>
+        </div>
+        <label>Instructions</label>
+        <textarea rows="5" type="text" name="recipe"></textarea>
+        <button class="form-submit-btn" type="submit">Submit</button>
+    </form>
+</div>
+
+<script>
+    imagePreview.style.display = "none"
+    imageInput.onchange = event => {
+        const [file] = imageInput.files
+        if (file) {
+            imagePreview.src = URL.createObjectURL(file)
+            imagePreview.style.display = "block"
+        }
+    }
+
+    let selectedIngredients = []
+
+    function addIngredient() {
+        let id = document.getElementById("ingredientSelect").value
+        let value = ingredientSelect.options[ingredientSelect.selectedIndex].innerHTML;
+
+        if (selectedIngredients.includes(id)) return
+
+        document.querySelector(`input[type='checkbox'][value="${id}"]`).checked = true;
+
+        selectedIngredients.push(id)
+        let ingredientList = document.getElementById("selectedIngredients")
+
+        let div = document.createElement("div")
+        div.classList.add("form-selected-ingredient")
+
+        let li = document.createElement("li")
+        li.textContent = value
+        div.appendChild(li)
+
+        let button = document.createElement("button")
+        button.textContent = "Remove"
+        button.setAttribute("type", "button")
+        button.onclick = () => {
+            selectedIngredients = selectedIngredients.filter((el) => el != id)
+            let ingredientList = document.getElementById("selectedIngredients")
+            ingredientList.removeChild(div)
+            let checkbox = document.querySelector(`input[type='checkbox'][value="${id}"]`).checked = false;
+        }
+        div.appendChild(button)
+        ingredientList.appendChild(div)
+    }
+
+</script>
+{% endblock %}

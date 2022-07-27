@@ -111,12 +111,7 @@ def drinks_get():
                                     FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
                                     FROM drinks D''').fetchall()
 
-    ingredients = db.session.execute("SELECT * FROM ingredients").fetchall()
-
-    categories = db.session.execute(
-        "SELECT id, name FROM DrinkCategories").fetchall()
-
-    return render_template("drinks.html", drinks=drinks, ingredients=ingredients, categories=categories)
+    return render_template("drinks.html", drinks=drinks)
 
 
 @app.route("/drinks", methods=["POST"])
@@ -155,6 +150,15 @@ def drinks_post():
 
     db.session.commit()
     return redirect("/drinks")
+
+
+@app.route("/drinks/add", methods=["GET"])
+def new_drink_form():
+    get_logged_user()
+    ingredients = db.session.execute("SELECT * FROM ingredients").fetchall()
+    categories = db.session.execute(
+        "SELECT id, name FROM DrinkCategories").fetchall()
+    return render_template("drink_form.html", ingredients=ingredients, categories=categories)
 
 
 @app.route("/drinks/categories", methods=["POST"])
