@@ -91,8 +91,22 @@ def indgredients_post():
 
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
-    get_logged_user()
-    drinks = db.session.execute('''SELECT id, name, description, image_id,
+    (_, user_id) = get_logged_user()
+    filter_set = request.args.get(
+        "owned_ingredients", default="false", type=str)
+
+    if filter_set == "true":
+        drinks = db.session.execute('''SELECT D.id, name, description, image_id,
+                    COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
+                    FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
+                    FROM Drinks D WHERE D.id NOT IN(SELECT DISTINCT DI.drink_id FROM DrinkIngredients DI
+                    WHERE NOT EXISTS (SELECT UI.ingredient_id FROM UsersIngredients UI
+                    WHERE UI.user_id=:user_id AND UI.ingredient_id IN (
+                    SELECT DISTINCT DI2.ingredient_id
+                    FROM DrinkIngredients DI2
+                    WHERE DI2.ingredient_id=DI.ingredient_id)))''', {"user_id": user_id}).fetchall()
+    else:
+        drinks = db.session.execute('''SELECT id, name, description, image_id,
                                     COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
                                     FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
                                     FROM drinks D''').fetchall()

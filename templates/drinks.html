@@ -4,8 +4,19 @@
 {% block content %}
 
 <h1>Drinks</h1>
-
+<div>
+    Only show drinks that can be made using your owned ingredients
+    {% if request.args.get("owned_ingredients") == "true"%}
+    <input type="checkbox" onchange="handleFilterChange(this.checked)" checked>
+    {% else %}
+    <input type="checkbox" onchange="handleFilterChange(this.checked)">
+    {% endif %}
+</div>
 <div class="recipe-cards">
+    {% if drinks|length == 0 %}
+    <div>No drinks found</div>
+    {% endif %}
+
     {% for drink in drinks %}
     <div class="card">
         <a href="/drinks/{{drink.id}}"></a>
@@ -55,5 +66,12 @@ Add new drink category
     <input type="text" placeholder="description" name="description" />
     <button type="submit">Add</button>
 </form>
+
+
+<script>
+    function handleFilterChange(value) {
+        window.location.replace(`/drinks?owned_ingredients=${value}`);
+    }
+</script>
 
 {% endblock %}
