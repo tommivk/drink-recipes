@@ -218,6 +218,35 @@ def serve_drink(id):
     return render_template("drink.html", drink=drink, ingredients=ingredients, comments=comments)
 
 
+@app.route("/drinks/<int:id>/delete", methods=["POST"])
+def delete_drink(id):
+    (username, user_id) = get_logged_user()
+    check_csrf()
+
+    is_author = db.session.execute("SELECT 1 FROM Drinks WHERE id=:id AND user_id=:user_id", {
+        "id": id, "user_id": user_id}).fetchone()
+
+    if is_author:
+        image_id = db.session.execute(
+            "SELECT image_id FROM Drinks WHERE id=:id", {"id": id}).fetchone()[0]
+        db.session.execute(
+            "DELETE FROM Comments WHERE drink_id=:id", {"id": id})
+        db.session.execute(
+            "DELETE FROM Ratings WHERE drink_id=:id", {"id": id})
+        db.session.execute(
+            "DELETE FROM DrinkIngredients WHERE drink_id=:id", {"id": id})
+        db.session.execute(
+            "DELETE FROM FavouriteDrinks WHERE drink_id=:id", {"id": id})
+        db.session.execute("DELETE FROM Drinks WHERE id=:id", {"id": id})
+        db.session.execute(
+            "DELETE FROM Images WHERE id=:image_id", {"image_id": image_id})
+        db.session.commit()
+    else:
+        return abort(403)
+
+    return redirect(f"/{username}")
+
+
 @app.route("/drinks/<int:id>/comment", methods=["POST"])
 def add_comment(id):
     (_username, user_id) = get_logged_user()
