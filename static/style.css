@@ -52,14 +52,20 @@
 .recipe-cards {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
 }
 
-.card {
+.card,
+.card.pseudo-el {
     width: 300px;
     max-width: 100vw;
     height: 380px;
-    margin: 20px;
     position: relative;
+}
+
+.card.pseudo-el {
+    height: 0px;
 }
 
 .card:hover {
@@ -120,4 +126,21 @@
     top: 5px;
     right: 5px;
     cursor: pointer;
+}
+
+.title {
+    text-align: center;
+}
+
+.container {
+    max-width: 1260px;
+    margin: auto;
+}
+
+.filter-bar {
+    margin: 30px 0px;
+}
+
+.add-recipe-button {
+    float: right;
 }

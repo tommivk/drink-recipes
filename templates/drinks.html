@@ -3,70 +3,75 @@
 
 {% block content %}
 
-<h1>Drinks</h1>
-<div>
-    Only show drinks that can be made using your owned ingredients
-    {% if request.args.get("owned_ingredients") == "true"%}
-    <input type="checkbox" onchange="handleFilterChange(this.checked)" checked>
-    {% else %}
-    <input type="checkbox" onchange="handleFilterChange(this.checked)">
-    {% endif %}
-</div>
-<div class="recipe-cards">
-    {% if drinks|length == 0 %}
-    <div>No drinks found</div>
-    {% endif %}
+<div class="container">
+    <h1 class="title">Drink Recipes</h1>
+    <div class="filter-bar">
+        Only show drinks that can be made using your owned ingredients
+        {% if request.args.get("owned_ingredients") == "true"%}
+        <input type="checkbox" onchange="handleFilterChange(this.checked)" checked>
+        {% else %}
+        <input type="checkbox" onchange="handleFilterChange(this.checked)">
+        {% endif %}
+        <button class="add-recipe-button">Add new recipe</button>
+    </div>
+    <div class="recipe-cards">
+        {% if drinks|length == 0 %}
+        <div>No drinks found</div>
+        {% endif %}
 
-    {% for drink in drinks %}
-    <div class="card">
-        <a href="/drinks/{{drink.id}}"></a>
-        <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
-        <div class="card-content">
-            <h3 class="card-title">{{drink.name}}</h3>
-            <div class="card-rating">
-                <div class="stars card-stars" style="--rating: {{drink.rating}}">
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
+        {% for drink in drinks %}
+        <div class="card">
+            <a href="/drinks/{{drink.id}}"></a>
+            <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
+            <div class="card-content">
+                <h3 class="card-title">{{drink.name}}</h3>
+                <div class="card-rating">
+                    <div class="stars card-stars" style="--rating: {{drink.rating}}">
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    {{drink.description}}
                 </div>
             </div>
-            <div class="card-description">
-                {{drink.description}}
-            </div>
         </div>
+        {% endfor %}
+        <div class="card pseudo-el"></div>
+        <div class="card pseudo-el"></div>
+        <div class="card pseudo-el"></div>
     </div>
-    {% endfor %}
+
+    <form action="/drinks" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <input type="text" placeholder="name" name="name" />
+        <input type="text" placeholder="description" name="description" />
+        <select name="category">
+            {% for category in categories %}
+            <option value="{{ category.id }}"> {{ category.name }}
+                {% endfor %}
+        </select>
+        <input type="text" placeholder="recipe" name="recipe" />
+        <input type="file" name="picture" />
+        <select name="ingredients" multiple>
+            {% for ingredient in ingredients %}
+            <option name="options" value="{{ ingredient.id }}"> {{ ingredient.name }}
+                {% endfor %}
+        </select>
+        <button type="submit">Add</button>
+    </form>
+
+    Add new drink category
+    <form action="/drinks/categories" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="text" placeholder="name" name="name" />
+        <input type="text" placeholder="description" name="description" />
+        <button type="submit">Add</button>
+    </form>
 </div>
-
-<form action="/drinks" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <input type="text" placeholder="name" name="name" />
-    <input type="text" placeholder="description" name="description" />
-    <select name="category">
-        {% for category in categories %}
-        <option value="{{ category.id }}"> {{ category.name }}
-            {% endfor %}
-    </select>
-    <input type="text" placeholder="recipe" name="recipe" />
-    <input type="file" name="picture" />
-    <select name="ingredients" multiple>
-        {% for ingredient in ingredients %}
-        <option name="options" value="{{ ingredient.id }}"> {{ ingredient.name }}
-            {% endfor %}
-    </select>
-    <button type="submit">Add</button>
-</form>
-
-Add new drink category
-<form action="/drinks/categories" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-    <input type="text" placeholder="name" name="name" />
-    <input type="text" placeholder="description" name="description" />
-    <button type="submit">Add</button>
-</form>
-
 
 <script>
     function handleFilterChange(value) {
