@@ -2,61 +2,64 @@
 {% block title %}{{drink.name}}{% endblock %}
 
 {% block content %}
+<div class="container">
+    <h1 class="title">{{drink.name}}</h1>
+    <div class="drink-container">
+        <p>Uploaded by: {{drink.author}}</p>
+        {% if drink.image_id %}
+        <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
+        {% endif %}
 
-<h1>{{drink.name}}</h1>
-<p>Uploaded by: {{drink.author}}</p>
-{% if drink.image_id %}
-<img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
-{% endif %}
-
-<form action="/drinks/{{drink.id}}/favourite" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    {% if session.username and not drink.is_favourited %}
-    <button type="submit">Add to favourites</button>
-    {% endif %}
-</form>
-
-<form action="/drinks/{{drink.id}}/rate" method="post" id="ratingForm">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <input id="starsInput" type="hidden" min="1" max="5" type="range" name="stars">
-
-    <div class="stars">
-        <div class="star" onclick="rate(1)"></div>
-        <div class="star" onclick="rate(2)"></div>
-        <div class="star" onclick="rate(3)"></div>
-        <div class="star" onclick="rate(4)"></div>
-        <div class="star" onclick="rate(5)"></div>
-    </div>
-</form>
-
-<p>Ratings: {{drink.rating_count}}</p>
-<p>Category: {{drink.category}}</p>
-<ul>
-    {% for ingredient in ingredients %}
-    <li>{{ ingredient.name }}</li>
-    {% endfor %}
-</ul>
-<p>{{drink.description}}</p>
-<p>{{drink.recipe}}</p>
-
-<form action="/drinks/{{drink.id}}/comment" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <input type="text" name="comment"> <button type="submit">Add comment</button>
-</form>
-
-<form action="/drinks/{{drink.id}}/comment/delete" method="post">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <ul>
-        {% for comment in comments %}
-        <li>
-            {{comment.date}} {{comment.username}}: {{comment.comment}}
-            {% if comment.username == session.username %}
-            <button type="submit" value="{{comment.id}}" name="comment_id">X</button>
+        <form action="/drinks/{{drink.id}}/favourite" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            {% if session.username and not drink.is_favourited %}
+            <button type="submit">Add to favourites</button>
             {% endif %}
-        </li>
-        {% endfor%}
-    </ul>
-</form>
+        </form>
+
+        <form action="/drinks/{{drink.id}}/rate" method="post" id="ratingForm">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <input id="starsInput" type="hidden" min="1" max="5" type="range" name="stars">
+
+            <div class="stars">
+                <div class="star" onclick="rate(1)"></div>
+                <div class="star" onclick="rate(2)"></div>
+                <div class="star" onclick="rate(3)"></div>
+                <div class="star" onclick="rate(4)"></div>
+                <div class="star" onclick="rate(5)"></div>
+            </div>
+        </form>
+
+        <p>Ratings: {{drink.rating_count}}</p>
+        <p>Category: {{drink.category}}</p>
+        <ul>
+            {% for ingredient in ingredients %}
+            <li>{{ ingredient.name }}</li>
+            {% endfor %}
+        </ul>
+        <p>{{drink.description}}</p>
+        <p>{{drink.recipe}}</p>
+
+        <form action="/drinks/{{drink.id}}/comment" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <input type="text" name="comment"> <button type="submit">Add comment</button>
+        </form>
+
+        <form action="/drinks/{{drink.id}}/comment/delete" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <ul>
+                {% for comment in comments %}
+                <li>
+                    {{comment.date}} {{comment.username}}: {{comment.comment}}
+                    {% if comment.username == session.username %}
+                    <button type="submit" value="{{comment.id}}" name="comment_id">X</button>
+                    {% endif %}
+                </li>
+                {% endfor%}
+            </ul>
+        </form>
+    </div>
+</div>
 
 <script>
     let rating = "{{drink.rating}}"

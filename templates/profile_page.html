@@ -2,76 +2,84 @@
 {% block title %}{{username}}{% endblock %}
 
 {% block content %}
-<h1>{{username}}</h1>
+<div class="container">
+    <h1 class="title">{{username}}</h1>
 
-{% if username == session.username %}
-<a href="/{{username}}/ingredients">My ingredients</a>
-{% endif %}
+    {% if username == session.username %}
+    <a href="/{{username}}/ingredients">My ingredients</a>
+    {% endif %}
 
-<h2>Favourited drinks</h2>
+    <h2 class="title">Favourited drinks</h2>
 
-<div class="recipe-cards">
-    {% for drink in favourite_drinks %}
-    <div class="card">
-        <a href="/drinks/{{drink.id}}"></a>
-        <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
-        <div class="card-content">
-            <h3 class="card-title">{{drink.name}}</h3>
-            <div class="card-rating">
-                <div class="stars card-stars" style="--rating: {{drink.rating}}">
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
+    <div class="recipe-cards">
+        {% for drink in favourite_drinks %}
+        <div class="card">
+            <a href="/drinks/{{drink.id}}"></a>
+            <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
+            <div class="card-content">
+                <h3 class="card-title">{{drink.name}}</h3>
+                <div class="card-rating">
+                    <div class="stars card-stars" style="--rating: {{drink.rating}}">
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                    </div>
                 </div>
-            </div>
-            <div class="card-description">
-                {{drink.description}}
-            </div>
-
-            <form action="/drinks/{{drink.id}}/favourite/delete" method="post">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                {% if username == session.username %}
-                <button class="remove-fav-btn" type="submit">X</button>
-                {% endif %}
-            </form>
-        </div>
-    </div>
-    {% endfor %}
-</div>
-
-<h2>Uploaded drinks</h2>
-
-<div class="recipe-cards">
-    {% for drink in uploaded_drinks %}
-    <div class="card">
-        <a href="/drinks/{{drink.id}}"></a>
-        <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
-        <div class="card-content">
-            <h3 class="card-title">{{drink.name}}</h3>
-            <div class="card-rating">
-                <div class="stars card-stars" style="--rating: {{drink.rating}}">
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
-                    <div class="star"></div>
+                <div class="card-description">
+                    {{drink.description}}
                 </div>
-            </div>
-            <div class="card-description">
-                {{drink.description}}
-            </div>
 
-            <form action="/drinks/{{drink.id}}/delete" method="post">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                {% if username == session.username %}
-                <button class="drink-delete-btn" type="submit">DELETE</button>
-                {% endif %}
-            </form>
+                <form action="/drinks/{{drink.id}}/favourite/delete" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    {% if username == session.username %}
+                    <button class="remove-fav-btn" type="submit">X</button>
+                    {% endif %}
+                </form>
+            </div>
         </div>
+        {% endfor %}
+        <div class="card spacer"></div>
+        <div class="card spacer"></div>
+        <div class="card spacer"></div>
     </div>
-    {% endfor %}
+
+    <h2 class="title">Uploaded drinks</h2>
+
+    <div class="recipe-cards">
+        {% for drink in uploaded_drinks %}
+        <div class="card">
+            <a href="/drinks/{{drink.id}}"></a>
+            <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
+            <div class="card-content">
+                <h3 class="card-title">{{drink.name}}</h3>
+                <div class="card-rating">
+                    <div class="stars card-stars" style="--rating: {{drink.rating}}">
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                    </div>
+                </div>
+                <div class="card-description">
+                    {{drink.description}}
+                </div>
+
+                <form action="/drinks/{{drink.id}}/delete" method="post">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    {% if username == session.username %}
+                    <button class="drink-delete-btn" type="submit">DELETE</button>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+        {% endfor %}
+        <div class="card spacer"></div>
+        <div class="card spacer"></div>
+        <div class="card spacer"></div>
+    </div>
 </div>
 
 {% endblock %}

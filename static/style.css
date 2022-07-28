@@ -9,6 +9,7 @@
     --icon-backround: linear-gradient(to right,
             var(--fill) 0 var(--x),
             var(--fillbg) 0 var(--x));
+    --drk-gray: rgb(30 30 32);
 }
 
 body {
@@ -81,14 +82,14 @@ body {
 }
 
 .card,
-.card.pseudo-el {
+.card.spacer {
     width: 300px;
     max-width: 100vw;
     height: 380px;
     position: relative;
 }
 
-.card.pseudo-el {
+.card.spacer {
     height: 0px;
 }
 
@@ -182,10 +183,10 @@ body {
     max-width: 100vw;
     min-height: 600px;
     margin: auto;
-    background: rgb(7, 7, 51);
+    background: var(--drk-gray);
     padding: 20px;
     margin-top: 50px;
-    border-radius: 15px;
+    border-radius: 10px;
     box-sizing: border-box;
 }
 
@@ -285,7 +286,7 @@ input[type="file"]:hover+label {
 }
 
 .form-select>option {
-    background: rgb(7, 7, 51);
+    background: var(--drk-gray)
 }
 
 .form-right>input[type=text]:focus {
@@ -442,4 +443,9 @@ input[type="file"]:hover+label {
 
 .form-container form>input:focus {
     outline: 1px solid rgba(128, 128, 128, 0.637);
+}
+
+.drink-container {
+    width: fit-content;
+    margin: auto;
 }
