@@ -3,16 +3,17 @@
 
 {% block content %}
 
-<h1>Drink Club</h1>
-
 {%if session.username %}
 <p>Hello</p>
 {%else%}
-<form action="/login" method="post">
-    <input type="text" placeholder="username" name="username" />
-    <input type="password" placeholder="password" name="password" />
-    <button type="submit">Login</button>
-</form>
+<div class="form-container">
+    <h1>Login</h1>
+    <form action="/login" method="post">
+        <input type="text" placeholder="Username" name="username" />
+        <input type="password" placeholder="Password" name="password" />
+        <button class="btn" type="submit">Login</button>
+    </form>
+</div>
 {% endif %}
 
 {% endblock %}
