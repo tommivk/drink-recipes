@@ -25,9 +25,13 @@ def signup():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        password_confirm = request.form["passwordConfirm"]
 
         if len(username) < 3 or len(username) > 20:
             return "Username should be between 3 and 20 characters long"
+
+        if password != password_confirm:
+            return "Password does not match the password confirmation"
 
         if len(password) < 6:
             return "Password should be minimum of 6 characters long"
