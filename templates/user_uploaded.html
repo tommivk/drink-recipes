@@ -1,0 +1,39 @@
+{% extends "profile_page.html" %}
+
+{% block uploaded %}
+<h2 class="title">Uploaded drinks</h2>
+<div class="recipe-cards">
+    {% for drink in uploaded_drinks %}
+    <div class="card">
+        <a href="/drinks/{{drink.id}}"></a>
+        <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
+        <div class="card-content">
+            <h3 class="card-title">{{drink.name}}</h3>
+            <div class="card-rating">
+                <div class="stars card-stars" style="--rating: {{drink.rating}}">
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                    <div class="star"></div>
+                </div>
+            </div>
+            <div class="card-description">
+                {{drink.description}}
+            </div>
+
+            <form action="/drinks/{{drink.id}}/delete" method="post">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                {% if username == session.username %}
+                <button class="drink-delete-btn" type="submit">DELETE</button>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+    <div class="card spacer"></div>
+    <div class="card spacer"></div>
+    <div class="card spacer"></div>
+</div>
+
+{% endblock %}

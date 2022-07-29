@@ -1,10 +1,9 @@
-{% extends "layout.html" %}
+{% extends "profile_page.html" %}
 {% block title %}{{username}}{% endblock %}
 
-{% block content %}
+{% block ingredients %}
 <div>
-
-    <h2>Added:</h2>
+    <h2 class="title">My ingredients</h2>
     <form action="/{{session.username}}/ingredients/delete" method="post">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <ul>

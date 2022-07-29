@@ -265,7 +265,7 @@ def delete_drink(id):
     else:
         return abort(403)
 
-    return redirect(f"/{username}")
+    return redirect(f"/{username}/uploaded")
 
 
 @app.route("/drinks/<int:id>/comment", methods=["POST"])
@@ -358,7 +358,7 @@ def favourite_drink_delete(id):
     db.session.execute(sql, {"user_id": user_id, "drink_id": id})
     db.session.commit()
 
-    return redirect(f"/{username}")
+    return redirect(f"/{username}/favourited")
 
 
 @app.route("/images/<int:id>")
@@ -375,21 +375,7 @@ def serve_img(id):
 @app.route("/<string:username>")
 def profile_page(username):
     get_logged_user()
-    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
-                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                FROM FavouriteDrinks F
-                JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
-            '''
-    response = db.session.execute(sql, {"username": username})
-    favourite_drinks = response.fetchall()
-
-    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
-                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                FROM Drinks D JOIN Users U on U.id = D.user_id WHERE U.username=:username
-            '''
-    uploaded_drinks = db.session.execute(
-        sql, {"username": username}).fetchall()
-    return render_template("profile_page.html", username=username, favourite_drinks=favourite_drinks, uploaded_drinks=uploaded_drinks)
+    return render_template("profile_page.html", username=username)
 
 
 @app.route("/<string:username>/ingredients", methods=["GET"])
@@ -406,7 +392,7 @@ def user_ingredients(username):
     users_ingredients = db.session.execute(
         sql, {"user_id": user_id}).fetchall()
 
-    return render_template("user_ingredients.html", ingredients=ingredients, users_ingredients=users_ingredients)
+    return render_template("user_ingredients.html", username=username, ingredients=ingredients, users_ingredients=users_ingredients)
 
 
 @app.route("/<string:username>/ingredients", methods=["POST"])
@@ -425,6 +411,38 @@ def favourite_ingredient(username):
     db.session.commit()
 
     return redirect(f"/{username}/ingredients")
+
+
+@app.route("/<string:username>/uploaded", methods=["GET"])
+def user_uploaded(username):
+    get_logged_user()
+
+    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
+                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
+                FROM Drinks D JOIN Users U on U.id = D.user_id WHERE U.username=:username
+            '''
+    uploaded_drinks = db.session.execute(
+        sql, {"username": username}).fetchall()
+
+    return render_template("user_uploaded.html", username=username, uploaded_drinks=uploaded_drinks)
+
+
+@app.route("/<string:username>/favourited", methods=["GET"])
+def user_favourited(username):
+    (user, _) = get_logged_user()
+
+    if username != user:
+        return abort(403)
+
+    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
+                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
+                FROM FavouriteDrinks F
+                JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
+            '''
+    response = db.session.execute(sql, {"username": username})
+    favourited_drinks = response.fetchall()
+
+    return render_template("user_favourited.html", username=username, favourited_drinks=favourited_drinks)
 
 
 @app.route("/<string:username>/ingredients/delete", methods=["POST"])
