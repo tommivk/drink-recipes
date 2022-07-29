@@ -49,7 +49,7 @@ def signup():
             return "Username already exists"
 
         hash = generate_password_hash(password)
-        sql = "INSERT INTO Users (username, password_hash) VALUES(:username, :password_hash)"
+        sql = "INSERT INTO Users (username, password_hash, admin) VALUES(:username, :password_hash, false)"
         db.session.execute(sql, {"username": username, "password_hash": hash})
         db.session.commit()
 
@@ -63,7 +63,7 @@ def login_post():
     username = request.form["username"]
     password = request.form["password"]
 
-    sql = "SELECT id, password_hash FROM users WHERE username=:username"
+    sql = "SELECT id, password_hash, admin FROM users WHERE username=:username"
     result = db.session.execute(sql, {"username": username})
     user = result.fetchone()
 
@@ -76,6 +76,8 @@ def login_post():
             session["username"] = username
             session["user_id"] = user.id
             session["csrf_token"] = secrets.token_hex(16)
+            if user.admin == True:
+                session["admin"] = True
             return redirect("/")
         else:
             return "Invalid password"
@@ -86,6 +88,8 @@ def logout():
     del session["username"]
     del session["user_id"]
     del session["csrf_token"]
+    if "admin" in session:
+        del session["admin"]
     return redirect("/")
 
 
@@ -100,8 +104,8 @@ def ingredients_get():
 
 @app.route("/ingredients", methods=["POST"])
 def indgredients_post():
+    is_admin()
     check_csrf()
-    # TODO check if admin
 
     name = request.form["name"]
     type = request.form["type"]
@@ -201,8 +205,9 @@ def new_drink_form():
 
 @app.route("/drinks/categories", methods=["POST"])
 def add_drink_category():
+    is_admin()
     check_csrf()
-    # TODO check if admin
+
     name = request.form["name"]
     description = request.form["description"]
 
@@ -478,3 +483,10 @@ def not_logged_in(e):
 def check_csrf():
     if session["csrf_token"] != request.form["csrf_token"]:
         return abort(403)
+
+
+def is_admin():
+    if "admin" in session:
+        if session["admin"] == True:
+            return
+    return abort(403)
