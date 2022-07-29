@@ -221,7 +221,7 @@ def add_drink_category():
 
 @app.route("/drinks/<int:id>")
 def serve_drink(id):
-    (_username, user_id) = get_logged_user()
+    (_, user_id) = get_logged_user()
 
     sql = '''SELECT D.id, image_id, D.name, DC.name as category, D.description, recipe, timestamp, username as author,
                 (SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) as rating FROM Ratings R WHERE R.drink_id = D.id),
@@ -275,7 +275,7 @@ def delete_drink(id):
 
 @app.route("/drinks/<int:id>/comment", methods=["POST"])
 def add_comment(id):
-    (_username, user_id) = get_logged_user()
+    (_, user_id) = get_logged_user()
     check_csrf()
 
     comment = request.form["comment"].strip()
@@ -290,7 +290,7 @@ def add_comment(id):
 
 @app.route("/drinks/<int:drink_id>/comment/delete", methods=["POST"])
 def delete_comment(drink_id):
-    (_username, user_id) = get_logged_user()
+    (_, user_id) = get_logged_user()
     check_csrf()
 
     comment_id = request.form["comment_id"]
@@ -310,17 +310,16 @@ def delete_comment(drink_id):
 
 @app.route("/drinks/<int:id>/rate", methods=["POST"])
 def add_review(id):
-    (_username, user_id) = get_logged_user()
+    (_, user_id) = get_logged_user()
     check_csrf()
 
     stars = int(request.form["stars"])
 
-    sql = "SELECT COUNT(*) FROM ratings WHERE user_id=:user_id AND drink_id=:drink_id"
-    result = db.session.execute(sql, {"user_id": user_id, "drink_id": id})
-    review_exists = int(result.fetchone()[0]) > 0
-
     if stars not in range(1, 6):
         return "Invalid amount of stars"
+
+    review_exists = db.session.execute("SELECT 1 FROM ratings WHERE user_id=:user_id AND drink_id=:drink_id", {
+                                       "user_id": user_id, "drink_id": id}).fetchone()
 
     if review_exists:
         sql = "UPDATE ratings SET stars=:stars WHERE user_id=:user_id AND drink_id=:drink_id"
@@ -336,13 +335,11 @@ def add_review(id):
 
 @app.route("/drinks/<int:id>/favourite", methods=["POST"])
 def favourite_drink(id):
-    (_username, user_id) = get_logged_user()
+    (_, user_id) = get_logged_user()
     check_csrf()
 
-    sql = "SELECT COUNT(*) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id"
-    result = db.session.execute(sql, {"user_id": user_id, "drink_id": id})
-
-    is_favourited = result.fetchone()[0] > 0
+    is_favourited = db.session.execute("SELECT 1 FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id", {
+                                       "user_id": user_id, "drink_id": id}).fetchone()
 
     if is_favourited:
         return "Error"
