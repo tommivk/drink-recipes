@@ -1,3 +1,5 @@
+import json
+import urllib
 import secrets
 import re
 from datetime import datetime
@@ -143,9 +145,11 @@ def drinks_post():
     name = request.form["name"]
     recipe = request.form["recipe"]
     description = request.form["description"]
-    ingredient_ids = request.form.getlist("ingredients")
+    ingredients_data = request.form["ingredients"]
     category_id = request.form["category"]
     file = request.files["picture"]
+
+    ingredients = json.loads(urllib.parse.unquote(ingredients_data))
 
     if not file.filename.endswith(".jpg"):
         return "Invalid filetype"
@@ -165,9 +169,22 @@ def drinks_post():
                                       "category_id": category_id, "timestamp": datetime.now()})
     drink_id = result.fetchone()[0]
 
-    for id in ingredient_ids:
-        sql = "INSERT INTO DrinkIngredients (drink_id, ingredient_id) VALUES(:drink_id, :ingredient_id)"
-        db.session.execute(sql, {"drink_id": drink_id, "ingredient_id": id})
+    result = db.session.execute("SELECT id FROM Ingredients").fetchall()
+    valid_ids = [r[0] for r in result]
+
+    for ingredient in ingredients:
+        ingredient_id = ingredient['ingredientId']
+        measure = ingredient['measure']
+        unit = ingredient['unit']
+
+        # TODO validate measure and unit
+
+        if int(ingredient_id) not in valid_ids:
+            return "invalid ingredient id"
+
+        sql = "INSERT INTO DrinkIngredients (drink_id, ingredient_id, measure, unit) VALUES(:drink_id, :ingredient_id, :measure, :unit)"
+        db.session.execute(
+            sql, {"drink_id": drink_id, "ingredient_id": ingredient_id, "measure": measure, "unit": unit})
 
     db.session.commit()
     return redirect("/drinks")
@@ -213,7 +230,7 @@ def serve_drink(id):
     drink = db.session.execute(
         sql, {"drink_id": id, "user_id": user_id}).fetchone()
 
-    sql = "SELECT name FROM DrinkIngredients JOIN ingredients ON ingredients.id=DrinkIngredients.ingredient_id WHERE drink_id =:id "
+    sql = "SELECT name, unit, measure FROM DrinkIngredients JOIN ingredients ON ingredients.id=DrinkIngredients.ingredient_id WHERE drink_id =:id "
     ingredients = db.session.execute(sql, {"id": id}).fetchall()
 
     comments = db.session.execute(

@@ -34,7 +34,7 @@
         <p>Category: {{drink.category}}</p>
         <ul>
             {% for ingredient in ingredients %}
-            <li>{{ ingredient.name }}</li>
+            <li>{{ingredient.measure}} {{ingredient.unit}} {{ ingredient.name }}</li>
             {% endfor %}
         </ul>
         <p>{{drink.description}}</p>

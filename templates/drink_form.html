@@ -20,25 +20,34 @@
             <label>Description</label>
             <input type="text" name="description" autocomplete="off" />
             <label>Category</label>
-            <select class="form-select" name="category">
+            <select class="form-select category-select" name="category">
                 {% for category in categories %}
                 <option value="{{ category.id }}"> {{ category.name }}
                     {% endfor %}
             </select>
             <label>Ingredients</label>
 
-            {% for ingredient in ingredients %}
-            <input type="checkbox" hidden id="ingredientOption" name="ingredients" value="{{ ingredient.id }}"></input>
-            {% endfor %}
+            <input type="hidden" name="ingredients" id="ingredientsInput" />
 
             <div class="ingredient-select-wrapper">
+                <input class="measure-input" type="number" id="measure" autocomplete="off">
+                <select class="form-select" type="text" id=unit>
+                    <option selected value=""></option>
+                    <option value="cl">cl</option>
+                    <option value="ml">ml</option>
+                    <option value="litres">litres</option>
+                    <option value="pcs.">pcs.</option>
+                    <option value="dashes">dashes</option>
+                    <option value="tsp.">tsp.</option>
+                    <option value="tbsp.">tbsp.</option>
+                </select>
                 <select class="form-select" id="ingredientSelect">
                     {% for ingredient in ingredients %}
                     <option id="ingredientOption" name="options" value="{{ ingredient.id }}"> {{ ingredient.name }}
                     </option>
                     {% endfor %}
                 </select>
-                <button class="add-ingredient-btn" onclick="addIngredient()" type="button">Add ingredient</button>
+                <button class="add-ingredient-btn" onclick="addIngredient()" type="button">Add</button>
             </div>
 
             <label>Instructions</label>
@@ -61,34 +70,49 @@
     let selectedIngredients = []
 
     function addIngredient() {
-        let id = document.getElementById("ingredientSelect").value
-        let value = ingredientSelect.options[ingredientSelect.selectedIndex].innerHTML;
+        let unitInput = document.getElementById("unit")
+        let measureInput = document.getElementById("measure")
 
-        if (selectedIngredients.includes(id)) return
+        let unit = unitInput.value
+        let measure = measureInput.value
+        let ingredientId = document.getElementById("ingredientSelect").value
 
-        document.querySelector(`input[type='checkbox'][value="${id}"]`).checked = true;
+        if (selectedIngredients.find((el) => el.ingredientId === ingredientId)) return alert("Ingredient has already been added")
+        if (!measure && unit) return alert("Measure cannot be empty if unit is selected")
+        if (measure && !unit) return alert("Unit cannot be empty if measure is selected")
 
-        selectedIngredients.push(id)
+        selectedIngredients.push({ ingredientId, unit, measure })
+        updateInputValue()
+
         let ingredientList = document.getElementById("selectedIngredients")
+        let ingredient = ingredientSelect.options[ingredientSelect.selectedIndex].innerHTML
 
         let div = document.createElement("div")
         div.classList.add("form-selected-ingredient")
 
         let li = document.createElement("li")
-        li.textContent = value
+        li.textContent = `${measure} ${unit} ${ingredient}`
         div.appendChild(li)
 
         let button = document.createElement("button")
         button.textContent = "Remove"
         button.setAttribute("type", "button")
         button.onclick = () => {
-            selectedIngredients = selectedIngredients.filter((el) => el != id)
+            selectedIngredients = selectedIngredients.filter(el => el.ingredientId != ingredientId)
             let ingredientList = document.getElementById("selectedIngredients")
             ingredientList.removeChild(div)
-            let checkbox = document.querySelector(`input[type='checkbox'][value="${id}"]`).checked = false;
+            updateInputValue()
         }
         div.appendChild(button)
         ingredientList.appendChild(div)
+        measureInput.value = ""
+        unitInput.value = ""
+    }
+
+    function updateInputValue() {
+        let el = document.getElementById("ingredientsInput")
+        let value = encodeURIComponent(JSON.stringify(selectedIngredients))
+        el.value = value
     }
 
 </script>
