@@ -46,14 +46,6 @@
         <div class="card spacer"></div>
         <div class="card spacer"></div>
     </div>
-
-    Add new drink category
-    <form action="/drinks/categories" method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-        <input type="text" placeholder="name" name="name" />
-        <input type="text" placeholder="description" name="description" />
-        <button type="submit">Add</button>
-    </form>
 </div>
 
 <script>

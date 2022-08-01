@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block title %}Admin{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Admin</h1>
+
+    Add new drink category
+    <form action="/drinks/categories" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+        <input type="text" placeholder="name" name="name" />
+        <input type="text" placeholder="description" name="description" />
+        <button type="submit">Add</button>
+    </form>
+
+    Add new ingredient
+    <form action="/ingredients" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <input type="text" placeholder="name" name="name" />
+        <input type="text" placeholder="type" name="type" />
+        <button type="submit">Add</button>
+    </form>
+</div>
+{% endblock %}

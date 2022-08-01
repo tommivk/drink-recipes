@@ -465,6 +465,12 @@ def delete_favourite_ingredient(username):
     return redirect(f"/{username}/ingredients")
 
 
+@app.route("/admin", methods=["GET"])
+def admin_panel():
+    is_admin()
+    return render_template("admin.html")
+
+
 def get_logged_user():
     if "username" not in session or "user_id" not in session:
         return abort(401)
