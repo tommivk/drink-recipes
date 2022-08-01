@@ -10,6 +10,8 @@
             var(--fill) 0 var(--x),
             var(--fillbg) 0 var(--x));
     --drk-gray: rgb(30 30 32);
+    --navbar-height: 50px;
+    --green-gradient: linear-gradient(52deg, rgba(33, 160, 171, 1) 0%, rgba(3, 242, 169, 1) 100%);
 }
 
 body {
@@ -172,7 +174,7 @@ body {
 }
 
 .gradient-text {
-    background: linear-gradient(52deg, rgba(33, 160, 171, 1) 0%, rgba(3, 242, 169, 1) 100%);
+    background: var(--green-gradient);
     background-clip: text;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -364,7 +366,7 @@ input[type="file"]:hover+label {
     border: none;
     color: white;
     background: rgb(33, 160, 171);
-    background: linear-gradient(52deg, rgba(33, 160, 171, 1) 0%, rgba(3, 242, 169, 1) 100%);
+    background: var(--green-gradient);
 }
 
 .form-submit-btn:hover {
@@ -450,4 +452,104 @@ input[type="file"]:hover+label {
 .drink-container {
     width: fit-content;
     margin: auto;
+}
+
+.nav {
+    height: var(--navbar-height);
+    background: var(--drk-gray);
+    display: block;
+    color: white;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    width: 100vw;
+    position: relative;
+    user-select: none;
+}
+
+.nav ul {
+    margin: 0px;
+    list-style: none;
+    background-color: var(--drk-gray);
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+
+.nav li:last-child {
+    margin-left: auto;
+    margin-right: 30px;
+}
+
+.nav li:nth-child(1) {
+    margin-left: auto;
+}
+
+.nav-toggle {
+    margin-left: auto;
+    margin-right: 30px;
+    display: none;
+    cursor: pointer;
+}
+
+.nav a {
+    white-space: nowrap;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2em;
+    margin-left: 30px;
+    font-weight: 600;
+}
+
+.nav li:hover,
+.nav-title:hover {
+    background: var(--green-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-title {
+    font-size: 1.5em;
+}
+
+.content-wrapper {
+    overflow: auto;
+    height: calc(100vh - var(--navbar-height));
+    width: 100vw;
+}
+
+@media (max-width: 800px) {
+    .nav-toggle {
+        display: block;
+    }
+
+    .nav ul {
+        display: none;
+        margin: 0px;
+        padding: 20px;
+        position: absolute;
+        right: 0px;
+        top: var(--navbar-height);
+        flex-direction: column;
+        width: fit-content;
+        z-index: 100;
+    }
+
+    .nav li:last-child {
+        margin-left: 0px;
+        margin-right: 0px;
+    }
+
+    .nav li:nth-child(1) {
+        margin-left: 0px;
+    }
+
+    .nav li {
+        margin-bottom: 5px;
+    }
+
+    .nav ul.show {
+        display: flex;
+    }
 }
