@@ -171,7 +171,6 @@ body {
     right: 20px;
     padding: 0px 30px;
     box-sizing: border-box;
-    min-width: 300px;
     min-height: 60px;
     height: fit-content;
     width: fit-content;
@@ -181,7 +180,6 @@ body {
     justify-content: center;
     align-items: center;
     z-index: 99999;
-    max-width: 500px;
     color: white;
     font-size: 1.1em;
     font-weight: 500;
@@ -193,6 +191,11 @@ body {
 
 .notification.hidden {
     display: none;
+}
+
+.notification-icon {
+    font-size: 25px;
+    margin-right: 20px;
 }
 
 .filter-bar {

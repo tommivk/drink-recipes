@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../static/style.css">
+    <script src="https://kit.fontawesome.com/51bd4b3da4.js" crossorigin="anonymous"></script>
     <title>{% block title %}{% endblock %}</title>
 </head>
 
@@ -42,9 +43,17 @@
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
             <div id="notification" class="notification {{messages[0][0]}}" onclick="hideNotification(this)">
-                {{ messages[0][1] }}
+                {% if messages[0][0] == error %}}
+                <span class="notification-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </span>
+                {% else %}
+                <span class="notification-icon">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                </span>
+                {% endif %}
+                <span>{{ messages[0][1] }}</span>
             </div>
-            </ul>
             {% endif %}
             {% endwith %}
         </div>
