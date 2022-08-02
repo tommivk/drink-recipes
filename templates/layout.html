@@ -49,10 +49,12 @@
             {% endwith %}
         </div>
         <script>
-            setTimeout(() => {
-                let notification = document.getElementById("notification")
-                hideNotification(notification)
-            }, [5000])
+            let notification = document.getElementById("notification")
+            if (notification) {
+                setTimeout(() => {
+                    hideNotification(notification)
+                }, [5000])
+            }
 
             function hideNotification(notification) {
                 notification.classList.add("hidden")
