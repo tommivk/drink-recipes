@@ -40,12 +40,14 @@ def signup():
         pattern = re.compile("^[a-zA-Z0-9åäöÅÄÖ]*$")
 
         if not pattern.match(username):
-            return "Username contains invalid characters"
+            flash("Username contains invalid characters", "error")
+            return redirect("/signup")
 
         username_exists = db.session.execute(
-            "SELECT 1 FROM Users WHERE username=:username", {"username": username}).fetchone()
+            "SELECT 1 FROM Users WHERE LOWER(username)=:username", {"username": username.lower()}).fetchone()
         if username_exists:
-            return "Username already exists"
+            flash("Username is taken", "error")
+            return redirect("/signup")
 
         hash = generate_password_hash(password)
         sql = "INSERT INTO Users (username, password_hash, admin) VALUES(:username, :password_hash, false)"
@@ -62,8 +64,8 @@ def login_post():
     username = request.form["username"]
     password = request.form["password"]
 
-    sql = "SELECT id, password_hash, admin FROM users WHERE username=:username"
-    result = db.session.execute(sql, {"username": username})
+    sql = "SELECT id, username, password_hash, admin FROM users WHERE LOWER(username)=:username"
+    result = db.session.execute(sql, {"username": username.lower()})
     user = result.fetchone()
 
     if not user:
@@ -73,12 +75,12 @@ def login_post():
         hash = user.password_hash
 
         if check_password_hash(hash, password):
-            session["username"] = username
+            session["username"] = user.username
             session["user_id"] = user.id
             session["csrf_token"] = secrets.token_hex(16)
             if user.admin == True:
                 session["admin"] = True
-            flash(f"Logged in as {username}")
+            flash(f"Logged in as {user.username}")
             return redirect("/")
         else:
             flash("Invalid credentials", "error")
