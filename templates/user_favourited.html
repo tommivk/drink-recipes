@@ -23,7 +23,8 @@
                 {{drink.description}}
             </div>
 
-            <form action="/drinks/{{drink.id}}/favourite/delete" method="post">
+            <form action="/drinks/{{drink.id}}/favourite/delete" method="post"
+                onsubmit="return handleSubmit(this, '{{drink.name}}')">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                 {% if username == session.username %}
                 <button class="remove-fav-btn" type="submit">X</button>
@@ -36,4 +37,10 @@
     <div class="card spacer"></div>
     <div class="card spacer"></div>
 </div>
+
+<script>
+    function handleSubmit(form, drink) {
+        return confirm(`Remove ${drink} from your favourites?`)
+    }
+</script>
 {% endblock %}

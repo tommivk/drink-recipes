@@ -45,7 +45,7 @@
             <input type="text" name="comment"> <button type="submit">Add comment</button>
         </form>
 
-        <form action="/drinks/{{drink.id}}/comment/delete" method="post">
+        <form action="/drinks/{{drink.id}}/comment/delete" method="post" onsubmit="return handleCommentDelete()">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <ul>
                 {% for comment in comments %}
@@ -70,6 +70,10 @@
     function rate(stars) {
         document.getElementById("starsInput").value = stars;
         document.getElementById("ratingForm").submit()
+    }
+
+    function handleCommentDelete() {
+        return confirm("Delete comment?")
     }
 
 </script>
