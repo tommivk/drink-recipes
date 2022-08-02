@@ -38,8 +38,26 @@
         {% endblock %}
         <div class="content-wrapper">
             {% block content %}{% endblock %}
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div id="notification" class="notification {{messages[0][0]}}" onclick="hideNotification(this)">
+                {{ messages[0][1] }}
+            </div>
+            </ul>
+            {% endif %}
+            {% endwith %}
         </div>
         <script>
+            setTimeout(() => {
+                let notification = document.getElementById("notification")
+                hideNotification(notification)
+            }, [5000])
+
+            function hideNotification(notification) {
+                notification.classList.add("hidden")
+            }
+
             function toggleMenu() {
                 let nav = document.getElementById("nav-list")
                 nav.classList.contains("show") ? nav.classList.remove("show") : nav.classList.add("show");

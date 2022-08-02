@@ -3,8 +3,7 @@ import urllib
 import secrets
 import re
 from datetime import datetime
-from flask import Flask, abort
-from flask import render_template, request, session, redirect, make_response
+from flask import Flask, abort, render_template, request, session, redirect, make_response, flash
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import check_password_hash, generate_password_hash
 from os import getenv
@@ -52,8 +51,8 @@ def signup():
         sql = "INSERT INTO Users (username, password_hash, admin) VALUES(:username, :password_hash, false)"
         db.session.execute(sql, {"username": username, "password_hash": hash})
         db.session.commit()
-
-        return render_template("index.html")
+        flash("Successfully signed up")
+        return redirect("/")
     else:
         return render_template("signup.html")
 
@@ -68,7 +67,8 @@ def login_post():
     user = result.fetchone()
 
     if not user:
-        return "Invalid username"
+        flash("Invalid credentials", "error")
+        return redirect("/login")
     else:
         hash = user.password_hash
 
@@ -78,9 +78,11 @@ def login_post():
             session["csrf_token"] = secrets.token_hex(16)
             if user.admin == True:
                 session["admin"] = True
+            flash(f"Logged in as {username}")
             return redirect("/")
         else:
-            return "Invalid password"
+            flash("Invalid credentials", "error")
+            return redirect("/login")
 
 
 @app.route("/logout")
@@ -191,6 +193,8 @@ def drinks_post():
             sql, {"drink_id": drink_id, "ingredient_id": ingredient_id, "measure": measure, "unit": unit})
 
     db.session.commit()
+
+    flash(f'New recipe "{name}" created!')
     return redirect("/drinks")
 
 
@@ -267,6 +271,8 @@ def delete_drink(id):
         db.session.execute(
             "DELETE FROM Images WHERE id=:image_id", {"image_id": image_id})
         db.session.commit()
+
+        flash("Drink successfully deleted")
     else:
         return abort(403)
 
@@ -284,6 +290,7 @@ def add_comment(id):
         db.session.execute(sql, {"user_id": user_id, "drink_id": id,
                            "comment": comment, "timestamp": datetime.now()})
         db.session.commit()
+        flash("New comment added")
 
     return redirect(f"/drinks/{id}")
 
@@ -304,7 +311,7 @@ def delete_comment(drink_id):
     db.session.execute("DELETE FROM Comments WHERE id=:comment_id", {
                        "comment_id": comment_id})
     db.session.commit()
-
+    flash("Comment deleted")
     return redirect(f"/drinks/{drink_id}")
 
 
@@ -323,8 +330,10 @@ def add_review(id):
 
     if review_exists:
         sql = "UPDATE ratings SET stars=:stars WHERE user_id=:user_id AND drink_id=:drink_id"
+        flash("Rating updated")
     else:
         sql = "INSERT INTO ratings (user_id, drink_id, stars) VALUES(:user_id, :drink_id, :stars)"
+        flash("Rating added")
 
     db.session.execute(
         sql, {"user_id": user_id, "drink_id": id, "stars": stars})
@@ -347,7 +356,7 @@ def favourite_drink(id):
         sql = "INSERT INTO FavouriteDrinks (user_id, drink_id) VALUES(:user_id, :drink_id)"
         db.session.execute(sql, {"user_id": user_id, "drink_id": id})
         db.session.commit()
-
+    flash("Recipe added to favourites")
     return redirect(f"/drinks/{id}")
 
 
@@ -356,11 +365,18 @@ def favourite_drink_delete(id):
     (username, user_id) = get_logged_user()
     check_csrf()
 
-    sql = "DELETE FROM FavouriteDrinks WHERE drink_id=:drink_id AND user_id=:user_id"
-    db.session.execute(sql, {"user_id": user_id, "drink_id": id})
-    db.session.commit()
-
-    return redirect(f"/{username}/favourited")
+    drink = db.session.execute("SELECT name FROM FavouriteDrinks F JOIN Drinks D ON D.id = F.drink_id WHERE F.drink_id=:drink_id AND F.user_id=:user_id", {
+        "user_id": user_id, "drink_id": id}).fetchone()
+    if drink:
+        sql = "DELETE FROM FavouriteDrinks WHERE drink_id=:drink_id AND user_id=:user_id"
+        db.session.execute(sql, {"user_id": user_id, "drink_id": id})
+        db.session.commit()
+        drink = db.session.execute(
+            "SELECT name FROM Drinks where id=:id", {"id": id}).fetchone()[0]
+        flash(f"{drink} deleted from favourites")
+        return redirect(f"/{username}/favourited")
+    else:
+        return abort(403)
 
 
 @app.route("/images/<int:id>")
@@ -462,6 +478,7 @@ def delete_favourite_ingredient(username):
         sql, {"ingredient_id": ingredient_id, "user_id": user_id})
     db.session.commit()
 
+    flash("Ingredient removed")
     return redirect(f"/{username}/ingredients")
 
 
