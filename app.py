@@ -12,8 +12,8 @@ from os import getenv
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
 
-DATABASE_URI = getenv('DATABASE_URI')
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+DATABASE_URL = getenv('DATABASE_URL')
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
 db = SQLAlchemy(app)
 
 
