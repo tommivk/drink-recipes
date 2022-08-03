@@ -3,9 +3,9 @@
 
 {% block content %}
 <div class="container">
-    <h1 class="title">{{drink.name}}</h1>
     <div class="drink-container">
-        <p class="text-center">{{drink.description}}</p>
+        <h1 class="title word-break">{{drink.name}}</h1>
+        <p class="text-center word-break">{{drink.description}}</p>
         <div class="drink-top-section">
             <p>Author: <a href="/{{drink.author}}">{{drink.author}}</a></p>
             <div class="flex-align">
@@ -46,7 +46,7 @@
         </ul>
 
         <h2>Instructions</h2>
-        <p class="drink-instructions">{{drink.recipe}}</p>
+        <p class="drink-instructions word-break">{{drink.recipe}}</p>
 
         <h2>Comments</h2>
         <form action="/drinks/{{drink.id}}/comment" method="post">
@@ -69,7 +69,7 @@
                             {{comment.date}}
                         </div>
                         <div>
-                            <p>{{comment.comment}}</p>
+                            <p class="word-break">{{comment.comment}}</p>
                         </div>
                         {% if comment.username == session.username %}
                         <button class="comment-delete-btn" type="submit" value="{{comment.id}}" name="comment_id">
