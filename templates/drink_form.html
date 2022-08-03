@@ -4,7 +4,8 @@
 {% block content %}
 <div class="drink-form-container">
     <h2>ADD NEW <span class="gradient-text">DRINK RECIPE</span></h2>
-    <form class="drink-form" id="drinkForm" action="/drinks" method="post" enctype="multipart/form-data">
+    <form class="drink-form" id="drinkForm" action="/drinks" method="post" enctype="multipart/form-data"
+        onsubmit="return validate(this)">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <div class="form-left">
             <input type="file" accept="image/*" name="picture" id="imageInput" />
@@ -12,13 +13,17 @@
                 Upload Image
                 <img id="imagePreview" src="" alt="" />
             </label>
+            <p id="image-error" class="text-center error-text hidden"></p>
+            <p id="image-label" class="image-label text-center"></p>
             <ul id="selectedIngredients"></ul>
         </div>
         <div class="form-right">
             <label>Name</label>
             <input type="text" name="name" autocomplete="off" />
+            <p id="name-error" class="text-center error-text hidden"></p>
             <label>Description</label>
             <input type="text" name="description" autocomplete="off" />
+            <p id="description-error" class="text-center error-text hidden"></p>
             <label>Category</label>
             <select class="form-select category-select" name="category">
                 {% for category in categories %}
@@ -49,19 +54,87 @@
                 </select>
                 <button class="add-ingredient-btn" onclick="addIngredient()" type="button">Add</button>
             </div>
+            <p id="ingredients-error" class="text-center error-text hidden"></p>
 
             <label>Instructions</label>
             <textarea rows="7" type="text" name="recipe"></textarea>
+            <p id="recipe-error" class="text-center error-text hidden"></p>
             <button class="form-submit-btn" type="submit">Submit</button>
         </div>
     </form>
 </div>
 
 <script>
+    let imageError = document.getElementById("image-error")
+    let nameError = document.getElementById("name-error")
+    let descriptionError = document.getElementById("description-error")
+    let ingredientsError = document.getElementById("ingredients-error")
+    let recipeError = document.getElementById("recipe-error")
+
+    function validate(form) {
+        hideErrorMessages()
+
+        let errors = false
+
+        if (form.name.value.length < 3 || form.name.value.length > 40) {
+            nameError.innerText = "Name must be between 3 and 40 characters long"
+            nameError.classList.remove("hidden")
+            errors = true;
+        }
+        if (form.description.value.length < 5 || form.description.value.length > 500) {
+            descriptionError.innerText = "Description must be be between 5 and 500 characters long"
+            descriptionError.classList.remove("hidden")
+            errors = true;
+        }
+        if (!form.ingredients.value) {
+            ingredientsError.innerText = "At least one ingredient must be added"
+            ingredientsError.classList.remove("hidden")
+            errors = true;
+        }
+        if (form.recipe.value.length < 10 || form.recipe.value.length > 2000) {
+            recipeError.innerText = "Instructions must be between 10 and 2000 characters long"
+            recipeError.classList.remove("hidden")
+            errors = true;
+        }
+        if (!form.picture.value) {
+            imageError.innerText = "Image is required"
+            imageError.classList.remove("hidden")
+            errors = true;
+        }
+        return !errors
+    }
+
+    function hideErrorMessages() {
+        imageError.classList.add("hidden")
+        nameError.classList.add("hidden")
+        descriptionError.classList.add("hidden")
+        ingredientsError.classList.add("hidden")
+        recipeError.classList.add("hidden")
+    }
+
     imagePreview.style.display = "none"
+    let imageLabel = document.getElementById("image-label")
     imageInput.onchange = event => {
+        imageError.classList.add("hidden")
+        imageLabel.innerText = ""
+        imagePreview.style.display = "none"
         const [file] = imageInput.files
         if (file) {
+            if (file.size > 200 * 1024) {
+                imageError.classList.remove("hidden")
+                imageError.innerText = "Maximum filesize is 200kB"
+                imageInput.value = ""
+                return
+            }
+            if (file.type != "image/jpeg") {
+                imageError.classList.remove("hidden")
+                imageError.innerText = "Image type must be jpeg"
+                imageInput.value = ""
+                return
+            }
+
+            imageLabel.classList.remove("error")
+            imageLabel.innerText = file.name
             imagePreview.src = URL.createObjectURL(file)
             imagePreview.style.display = "block"
         }
@@ -77,9 +150,28 @@
         let measure = measureInput.value
         let ingredientId = document.getElementById("ingredientSelect").value
 
-        if (selectedIngredients.find((el) => el.ingredientId === ingredientId)) return alert("Ingredient has already been added")
-        if (!measure && unit) return alert("Measure cannot be empty if unit is selected")
-        if (measure && !unit) return alert("Unit cannot be empty if measure is selected")
+        ingredientsError.classList.add("hidden")
+
+        if (selectedIngredients.find((el) => el.ingredientId === ingredientId)) {
+            ingredientsError.classList.remove("hidden")
+            ingredientsError.innerText = "Selected ingredient has already been added"
+            return
+        }
+        if (!measure && unit) {
+            ingredientsError.classList.remove("hidden")
+            ingredientsError.innerText = "Measure cannot be empty if unit is selected"
+            return
+        }
+        if (measure && !unit) {
+            ingredientsError.classList.remove("hidden")
+            ingredientsError.innerText = "Unit cannot be empty if measure is selected"
+            return
+        }
+        if (unit && measure <= 0) {
+            ingredientsError.classList.remove("hidden")
+            ingredientsError.innerText = "Measure must be a positive number"
+            return
+        }
 
         selectedIngredients.push({ ingredientId, unit, measure })
         updateInputValue()
@@ -110,9 +202,13 @@
     }
 
     function updateInputValue() {
-        let el = document.getElementById("ingredientsInput")
-        let value = encodeURIComponent(JSON.stringify(selectedIngredients))
-        el.value = value
+        let ingredientsInput = document.getElementById("ingredientsInput")
+
+        if (selectedIngredients.length == 0) {
+            ingredientsInput.value = ""
+            return
+        }
+        ingredientsInput.value = encodeURIComponent(JSON.stringify(selectedIngredients))
     }
 
 </script>

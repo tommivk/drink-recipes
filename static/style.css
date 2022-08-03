@@ -293,6 +293,15 @@ input[type="file"]:hover+label {
     box-shadow: 0px 0px 5px white;
 }
 
+.image-label {
+    color: white;
+}
+
+.error-text {
+    color: #d91f1f;
+    margin-bottom: 0px;
+}
+
 #imagePreview {
     position: absolute;
     top: 50%;
@@ -455,7 +464,6 @@ input[type="file"]:hover+label {
 
 .hidden {
     display: none;
-    background: red;
 }
 
 .drink-delete-btn {

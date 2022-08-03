@@ -147,7 +147,7 @@ def drinks_get():
 
 @app.route("/drinks", methods=["POST"])
 def drinks_post():
-    (_username, user_id) = get_logged_user()
+    (_, user_id) = get_logged_user()
     check_csrf()
 
     name = request.form["name"]
@@ -157,7 +157,17 @@ def drinks_post():
     category_id = request.form["category"]
     file = request.files["picture"]
 
-    ingredients = json.loads(urllib.parse.unquote(ingredients_data))
+    if not ingredients_data:
+        return "Ingredients data was undefined"
+
+    if len(name) < 3 or len(name) > 40:
+        return "Name must be between 3 and 40 characters long"
+
+    if len(description) < 5 or len(description) > 500:
+        return "Description must be be between 5 and 500 characters long"
+
+    if len(recipe) < 10 or len(recipe) > 2000:
+        return "Instructions must be between 10 and 2000 characters long"
 
     if not file.filename.endswith(".jpg"):
         return "Invalid filetype"
@@ -165,6 +175,11 @@ def drinks_post():
     image_data = file.read()
     if len(image_data) > 200*1024:
         return "Maximum filesize is 200kB"
+
+    result = db.session.execute("SELECT id FROM DrinkCategories").fetchall()
+    category_ids = [r[0] for r in result]
+    if int(category_id) not in category_ids:
+        return "Invalid category id"
 
     sql = "INSERT INTO Images (data) VALUES(:data) RETURNING id"
     result = db.session.execute(sql, {"data": image_data})
@@ -178,7 +193,9 @@ def drinks_post():
     drink_id = result.fetchone()[0]
 
     result = db.session.execute("SELECT id FROM Ingredients").fetchall()
-    valid_ids = [r[0] for r in result]
+    ingredient_ids = [r[0] for r in result]
+
+    ingredients = json.loads(urllib.parse.unquote(ingredients_data))
 
     for ingredient in ingredients:
         ingredient_id = ingredient['ingredientId']
@@ -187,7 +204,7 @@ def drinks_post():
 
         # TODO validate measure and unit
 
-        if int(ingredient_id) not in valid_ids:
+        if int(ingredient_id) not in ingredient_ids:
             return "invalid ingredient id"
 
         sql = "INSERT INTO DrinkIngredients (drink_id, ingredient_id, measure, unit) VALUES(:drink_id, :ingredient_id, :measure, :unit)"
