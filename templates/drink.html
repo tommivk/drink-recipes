@@ -5,41 +5,50 @@
 <div class="container">
     <h1 class="title">{{drink.name}}</h1>
     <div class="drink-container">
-        <p>Uploaded by: {{drink.author}}</p>
-        {% if drink.image_id %}
-        <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="500">
-        {% endif %}
-
-        <form action="/drinks/{{drink.id}}/favourite" method="post">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            {% if session.username and not drink.is_favourited %}
-            <button type="submit">Add to favourites</button>
-            {% endif %}
-        </form>
-
-        <form action="/drinks/{{drink.id}}/rate" method="post" id="ratingForm">
-            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input id="starsInput" type="hidden" min="1" max="5" type="range" name="stars">
-
-            <div class="stars">
-                <div class="star" onclick="rate(1)"></div>
-                <div class="star" onclick="rate(2)"></div>
-                <div class="star" onclick="rate(3)"></div>
-                <div class="star" onclick="rate(4)"></div>
-                <div class="star" onclick="rate(5)"></div>
+        <p class="text-center">{{drink.description}}</p>
+        <div class="drink-top-section">
+            <p>Author: <a href="/{{drink.author}}">{{drink.author}}</a></p>
+            <div class="flex-align">
+                <i class="fa-solid fa-martini-glass category-icon"></i>
+                <p>{{drink.category}}</p>
             </div>
-        </form>
+        </div>
+        <img class="drink-img" src="{{ url_for('serve_img', id=drink.image_id)}}">
 
-        <p>Ratings: {{drink.rating_count}}</p>
-        <p>Category: {{drink.category}}</p>
+        <div class="drink-bottom-section">
+            <div class="flex-align">
+                <form action="/drinks/{{drink.id}}/rate" method="post" id="ratingForm">
+                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                    <input id="starsInput" type="hidden" min="1" max="5" type="range" name="stars">
+                    <div class="stars">
+                        <div class="star" onclick="rate(1)"></div>
+                        <div class="star" onclick="rate(2)"></div>
+                        <div class="star" onclick="rate(3)"></div>
+                        <div class="star" onclick="rate(4)"></div>
+                        <div class="star" onclick="rate(5)"></div>
+                    </div>
+                </form>
+                <div class="rating-count">{{drink.rating_count}}</div>
+            </div>
+            <form action="/drinks/{{drink.id}}/favourite" method="post">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <button class="fav-drink-btn" {% if drink.is_favourited %} disabled {% endif %} type="submit">
+                    <i class="fa-solid fa-bookmark drink-favourite-icon"></i> Add to favourites
+                </button>
+            </form>
+        </div>
+
+        <h2>Ingredients</h2>
         <ul>
             {% for ingredient in ingredients %}
             <li>{{ingredient.measure}} {{ingredient.unit}} {{ ingredient.name }}</li>
             {% endfor %}
         </ul>
-        <p>{{drink.description}}</p>
-        <p>{{drink.recipe}}</p>
 
+        <h2>Instructions</h2>
+        <p class="drink-instructions">{{drink.recipe}}</p>
+
+        <h2>Comments</h2>
         <form action="/drinks/{{drink.id}}/comment" method="post">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <input type="text" name="comment"> <button type="submit">Add comment</button>
