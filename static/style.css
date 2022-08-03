@@ -160,11 +160,25 @@ body {
 }
 
 .remove-fav-btn {
-    z-index: 10;
+    z-index: 1000;
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 10px;
+    right: 10px;
     cursor: pointer;
+    padding: 5px 10px;
+    background: white;
+    border: 1px solid black;
+    color: white;
+    border-radius: 5px;
+}
+
+.remove-fav-icon {
+    color: rgb(214, 15, 15);
+    font-size: 20px;
+}
+
+.remove-fav-btn:hover>* {
+    color: rgb(100, 96, 96);
 }
 
 .title {
