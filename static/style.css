@@ -678,6 +678,10 @@ input[type="file"]:hover+label {
     color: black;
 }
 
+.comment-username {
+    display: inline-block;
+}
+
 .comment-delete-btn {
     position: absolute;
     top: 10px;
