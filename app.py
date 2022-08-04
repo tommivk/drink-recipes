@@ -394,7 +394,7 @@ def favourite_drink_delete(id):
         drink = db.session.execute(
             "SELECT name FROM Drinks where id=:id", {"id": id}).fetchone()[0]
         flash(f"{drink} deleted from favourites")
-        return redirect(f"/{username}/favourited")
+        return redirect(request.referrer)
     else:
         return abort(403)
 

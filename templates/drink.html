@@ -30,12 +30,23 @@
                 </form>
                 <div class="rating-count">{{drink.rating_count}}</div>
             </div>
+            {% if drink.is_favourited %}
+            <form action="/drinks/{{drink.id}}/favourite/delete" method="post">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <button class="fav-drink-btn" type="submit">
+                    <i class="fa-solid fa-bookmark drink-favourite-icon"></i> Remove from favourites
+                </button>
+            </form>
+            {% else %}
             <form action="/drinks/{{drink.id}}/favourite" method="post">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                <button class="fav-drink-btn" {% if drink.is_favourited %} disabled {% endif %} type="submit">
+                <button class="fav-drink-btn" type="submit">
                     <i class="fa-solid fa-bookmark drink-favourite-icon"></i> Add to favourites
                 </button>
             </form>
+            {% endif %}
+
+
         </div>
 
         <h2>Ingredients</h2>
