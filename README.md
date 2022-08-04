@@ -1,6 +1,6 @@
 # Drink recipes
 
-An app where users can discover drink recipes of various categories. Users can add new recipes and review and comment the existing ones. There is also a feature where users can add ingredients to their own list and browse drinks that can be made using them.
+An app where users can discover drink recipes of various categories. Users can add new recipes and rate and comment the existing ones. There is also a feature where users can add ingredients to their own list and browse drinks that can be made using them.
 
 https://drink-club.herokuapp.com
 
