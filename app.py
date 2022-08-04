@@ -50,8 +50,9 @@ def signup():
             return redirect("/signup")
 
         hash = generate_password_hash(password)
-        sql = "INSERT INTO Users (username, password_hash, admin) VALUES(:username, :password_hash, false)"
-        db.session.execute(sql, {"username": username, "password_hash": hash})
+        sql = "INSERT INTO Users (username, password_hash, join_date, admin) VALUES(:username, :password_hash, :join_date, false)"
+        db.session.execute(
+            sql, {"username": username, "password_hash": hash, "join_date": datetime.now()})
         db.session.commit()
         flash("Successfully signed up")
         return redirect("/")
