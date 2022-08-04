@@ -4,6 +4,11 @@
 {% block ingredients %}
 <div>
     <h2 class="title">My ingredients</h2>
+
+    {% if users_ingredients|length==0 %}
+    <p class="text-center">No ingredients added yet</p>
+    {% endif %}
+
     <form action="/{{session.username}}/ingredients/delete" method="post">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <ul>

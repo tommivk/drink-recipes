@@ -3,6 +3,10 @@
 {% block favourited%}
 <h2 class="title">Favourited recipes</h2>
 
+{% if favourited_drinks|length==0 %}
+<p class="text-center">No drinks favourited yet</p>
+{% endif %}
+
 <div class="recipe-cards">
     {% for drink in favourited_drinks %}
     <div class="card">

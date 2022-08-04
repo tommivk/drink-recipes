@@ -6,7 +6,7 @@
 <div class="container">
     <h1 class="title">Drink Recipes</h1>
     <div class="filter-bar">
-        Only show drinks that can be made using your owned ingredients
+        Show drinks that can be made by using ingredients on your list
         {% if request.args.get("owned_ingredients") == "true"%}
         <input type="checkbox" onchange="handleFilterChange(this.checked)" checked>
         {% else %}
@@ -16,11 +16,12 @@
             <button class="add-recipe-button btn">Add new recipe</button>
         </a>
     </div>
-    <div class="recipe-cards">
-        {% if drinks|length == 0 %}
-        <div>No drinks found</div>
-        {% endif %}
 
+    {% if drinks|length == 0 %}
+    <p class="text-center">No drinks found</p>
+    {% endif %}
+
+    <div class="recipe-cards">
         {% for drink in drinks %}
         <div class="card">
             <a href="/drinks/{{drink.id}}"></a>

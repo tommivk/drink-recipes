@@ -2,6 +2,11 @@
 
 {% block uploaded %}
 <h2 class="title">Uploaded drinks</h2>
+
+{% if uploaded_drinks|length==0 %}
+<p class="text-center">No drinks uploaded yet</p>
+{% endif %}
+
 <div class="recipe-cards">
     {% for drink in uploaded_drinks %}
     <div class="card">
