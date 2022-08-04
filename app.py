@@ -82,7 +82,7 @@ def login_post():
             if user.admin == True:
                 session["admin"] = True
             flash(f"Logged in as {user.username}")
-            return redirect("/")
+            return redirect("/drinks")
         else:
             flash("Invalid credentials", "error")
             return redirect("/login")
