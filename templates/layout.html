@@ -21,14 +21,13 @@
             <ul id="nav-list">
                 {% if session.username %}
                 <li><a href="/drinks">Drinks</a></li>
-                <li><a href="/ingredients">Ingredients</a></li>
                 {% if session.admin %}
                 <li><a href="/admin">Admin</a></li>
                 {% endif %}
                 <li><a href="/{{session.username}}">Profile</a></li>
                 <li><a href="/logout">Logout</a></li>
                 {% else %}
-                {%if request.path == "/login"%}
+                {%if request.path == "/login" or request.path == "/" %}
                 <li><a href="/signup">Sign up</a></li>
                 {% else %}
                 <li><a href="/login">Login</a></li>
