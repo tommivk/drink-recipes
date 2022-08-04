@@ -4,13 +4,13 @@
 {% block content %}
 <div class="container">
     <h1 class="title">{{username}}</h1>
-
-    <a href="/{{username}}/uploaded">Uploaded drink recipes</a>
-    {% if username == session.username %}
-    <a href="/{{username}}/favourited">Favourited drink recipes</a>
-    <a href="/{{username}}/ingredients">My ingredients</a>
-    {% endif %}
-
+    <div class="profile-links">
+        <a href="/{{username}}/uploaded">Uploaded drink recipes</a>
+        {% if username == session.username %}
+        <a href="/{{username}}/favourited">Favourited drink recipes</a>
+        <a href="/{{username}}/ingredients">My ingredient</a>
+        {% endif %}
+    </div>
     {% block favourited %}{% endblock %}
     {% block uploaded %}{% endblock %}
     {% block ingredients %}{% endblock %}
