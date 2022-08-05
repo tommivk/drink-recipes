@@ -62,7 +62,7 @@ body {
     cursor: pointer;
 }
 
-.stars.card-stars {
+.stars.small-stars {
     --x: calc(80px * (var(--rating) / 5));
     background: linear-gradient(to right,
             var(--fill) 0 var(--x),
@@ -74,7 +74,7 @@ body {
     height: 30px;
 }
 
-.card-stars {
+.small-stars {
     height: 15px;
     width: 80px;
 }
@@ -680,11 +680,16 @@ input[type="file"]:hover+label {
     list-style: none;
     padding: 0px;
     border-bottom: 2px solid grey;
+    margin-bottom: 60px;
 }
 
 .comment {
     position: relative;
     border-top: 2px solid grey;
+}
+
+.comment .stars {
+    pointer-events: none;
 }
 
 .comment a {
@@ -693,15 +698,21 @@ input[type="file"]:hover+label {
 
 .comment-username {
     display: inline-block;
+    margin: 10px 10px 10px 0px;
 }
 
 .comment-delete-btn {
     position: absolute;
-    top: 10px;
+    bottom: 0px;
     right: 10px;
     background: none;
     padding: 0px;
     border: none;
+}
+
+.comment-text {
+    margin: 25px 0px;
+    max-width: calc(100% - 40px)
 }
 
 .comment-delete-icon {
@@ -711,6 +722,8 @@ input[type="file"]:hover+label {
 
 .comment-date {
     color: gray;
+    margin-left: auto;
+    margin-right: 10px;
 }
 
 @media (max-width: 800px) {

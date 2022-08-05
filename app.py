@@ -263,7 +263,14 @@ def serve_drink(id):
     ingredients = db.session.execute(sql, {"id": id}).fetchall()
 
     comments = db.session.execute(
-        "SELECT C.id, C.comment, TO_CHAR(C.timestamp, 'DD/MM/YYYY HH:MI') as date, username FROM Comments C JOIN Users U ON U.id = C.user_id WHERE drink_id=:drink_id ORDER BY timestamp DESC", {"drink_id": id}).fetchall()
+        '''SELECT C.id, C.comment, TO_CHAR(C.timestamp, 'DD/MM/YYYY HH:MI') as date, username,
+            COALESCE((SELECT stars FROM Ratings R WHERE R.drink_id=:drink_id AND R.user_id = U.id), 0) as rating
+            FROM Comments C
+            JOIN Users U ON U.id = C.user_id
+            WHERE C.drink_id=:drink_id
+            ORDER BY timestamp DESC
+            ''',
+        {"drink_id": id}).fetchall()
 
     return render_template("drink.html", drink=drink, ingredients=ingredients, comments=comments)
 

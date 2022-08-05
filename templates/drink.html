@@ -65,21 +65,34 @@
             <input type="text" name="comment"> <button type="submit">Add comment</button>
         </form>
 
+        {% if comments|length == 0%}
+        <p>No comments added yet</p>
+        {% endif %}
+
         <form action="/drinks/{{drink.id}}/comment/delete" method="post" onsubmit="return handleCommentDelete()">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <ul class="comment-list">
                 {% for comment in comments %}
                 <li>
                     <div class="comment">
-                        <a href="/{{comment.username}}">
-                            <h3 class="comment-username">
-                                {{comment.username}}
-                            </h3>
-                        </a>
-                        <div class="comment-date">
-                            {{comment.date}}
+                        <div class="flex-align">
+                            <a href="/{{comment.username}}">
+                                <h3 class="comment-username">
+                                    {{comment.username}}
+                                </h3>
+                            </a>
+                            <div class="comment-date">
+                                {{comment.date}}
+                            </div>
                         </div>
-                        <div>
+                        <div class="stars small-stars" style="--rating: {{comment.rating}}">
+                            <div class="star"></div>
+                            <div class="star"></div>
+                            <div class="star"></div>
+                            <div class="star"></div>
+                            <div class="star"></div>
+                        </div>
+                        <div class="comment-text">
                             <p class="word-break">{{comment.comment}}</p>
                         </div>
                         {% if comment.username == session.username %}
