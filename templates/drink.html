@@ -19,13 +19,12 @@
             <div class="flex-align">
                 <form action="/drinks/{{drink.id}}/rate" method="post" id="ratingForm">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <input id="starsInput" type="hidden" min="1" max="5" type="range" name="stars">
                     <div class="stars" style="--rating: {{drink.rating}}">
-                        <div class="star" onclick="rate(1)"></div>
-                        <div class="star" onclick="rate(2)"></div>
-                        <div class="star" onclick="rate(3)"></div>
-                        <div class="star" onclick="rate(4)"></div>
-                        <div class="star" onclick="rate(5)"></div>
+                        <button class="star-btn star" name="stars" type="submit" value="1"></button>
+                        <button class="star-btn star" name="stars" type="submit" value="2"></button>
+                        <button class="star-btn star" name="stars" type="submit" value="3"></button>
+                        <button class="star-btn star" name="stars" type="submit" value="4"></button>
+                        <button class="star-btn star" name="stars" type="submit" value="5"></button>
                     </div>
                 </form>
                 <div class="rating-count">{{drink.rating_count}}</div>
@@ -45,8 +44,6 @@
                 </button>
             </form>
             {% endif %}
-
-
         </div>
 
         <h2>Ingredients</h2>
@@ -109,15 +106,9 @@
 </div>
 
 <script>
-    function rate(stars) {
-        document.getElementById("starsInput").value = stars;
-        document.getElementById("ratingForm").submit()
-    }
-
     function handleCommentDelete() {
         return confirm("Delete comment?")
     }
-
 </script>
 
 {% endblock %}
