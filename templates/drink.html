@@ -20,7 +20,7 @@
                 <form action="/drinks/{{drink.id}}/rate" method="post" id="ratingForm">
                     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                     <input id="starsInput" type="hidden" min="1" max="5" type="range" name="stars">
-                    <div class="stars">
+                    <div class="stars" style="--rating: {{drink.rating}}">
                         <div class="star" onclick="rate(1)"></div>
                         <div class="star" onclick="rate(2)"></div>
                         <div class="star" onclick="rate(3)"></div>
@@ -109,11 +109,6 @@
 </div>
 
 <script>
-    let rating = "{{drink.rating}}"
-    let root = document.querySelector(':root');
-
-    root.style.setProperty('--rating', rating == "None" ? "0" : rating)
-
     function rate(stars) {
         document.getElementById("starsInput").value = stars;
         document.getElementById("ratingForm").submit()

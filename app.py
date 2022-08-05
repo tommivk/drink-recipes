@@ -248,7 +248,7 @@ def serve_drink(id):
     (_, user_id) = get_logged_user()
 
     sql = '''SELECT D.id, image_id, D.name, DC.name as category, D.description, recipe, timestamp, username as author,
-                (SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) as rating FROM Ratings R WHERE R.drink_id = D.id),
+                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating,
                 (SELECT Count(*) as rating_count FROM Ratings R WHERE R.drink_id = D.id),
                 (SELECT (Count(*) > 0) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id) as is_favourited
                 FROM drinks D

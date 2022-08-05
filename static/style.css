@@ -5,10 +5,7 @@
     --icon-size: 30px;
     --rating: 0;
     --rating-box-width: 160px;
-    --x: calc(var(--rating-box-width) * (var(--rating) / 5));
-    --icon-backround: linear-gradient(to right,
-            var(--fill) 0 var(--x),
-            var(--fillbg) 0 var(--x));
+    --rating-box-width-sm: 80px;
     --drk-gray: rgb(30 30 32);
     --navbar-height: 50px;
     --green-gradient: linear-gradient(52deg, rgba(33, 160, 171, 1) 0%, rgba(3, 242, 169, 1) 100%);
@@ -51,10 +48,13 @@ body {
 }
 
 .stars {
+    --x: calc(var(--rating-box-width) * (var(--rating) / 5));
     display: flex;
     width: var(--rating-box-width);
     height: var(--icon-size);
-    background: var(--icon-backround);
+    background: linear-gradient(to right,
+            var(--fill) 0 var(--x),
+            var(--fillbg) 0 var(--x));
     -webkit-mask-image: var(--star);
     mask-image: var(--star);
     -webkit-mask-repeat: repeat;
@@ -63,7 +63,7 @@ body {
 }
 
 .stars.small-stars {
-    --x: calc(80px * (var(--rating) / 5));
+    --x: calc(var(--rating-box-width-sm) * (var(--rating) / 5));
     background: linear-gradient(to right,
             var(--fill) 0 var(--x),
             var(--fillbg) 0 var(--x));
