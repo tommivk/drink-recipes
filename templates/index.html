@@ -2,7 +2,63 @@
 {% block title %}Drink club{% endblock %}
 
 {% block content %}
+<div class="home-page">
+    <a href="/drinks/{{best[0].id}}" class="featured-link">
+        <div class="featured">
+            <div class="featured-image">
+                <img src="{{ url_for('serve_img', id=best[0].image_id)}}">
+            </div>
+            <div class="featured-right">
+                <div class="featured-text">
+                    <h1 class="title">{{best[0].name}}</h1>
+                    <p class="word-wrap">{{best[0].description}}</p>
+                </div>
+                <div class="featured-bottom">
+                    <div class="stars" style="--rating: {{best[0].rating}}">
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                        <div class="star"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </a>
+    <div class="top-5">
+        <h1 class="title">Top 5 recipes</h1>
+        <ol>
+            {% for drink in best %}
+            <li><a href="/drinks/{{drink.id}}">{{drink.name}}</a></li>
+            {% endfor %}
+        </ol>
+    </div>
 
-<h1>index</h1>
-
+    <div class="newest-drinks">
+        <h1 class="title">Newest recipes</h1>
+        <div class="newest-drinks-cards">
+            {% for drink in newest %}
+            <div class="card">
+                <a href="/drinks/{{drink.id}}"></a>
+                <img src="{{ url_for('serve_img', id=drink.image_id)}}" width="200">
+                <div class="card-content">
+                    <h3 class="card-title">{{drink.name}}</h3>
+                    <div class="card-rating">
+                        <div class="stars small-stars" style="--rating: {{drink.rating}}">
+                            <div class="star"></div>
+                            <div class="star"></div>
+                            <div class="star"></div>
+                            <div class="star"></div>
+                            <div class="star"></div>
+                        </div>
+                    </div>
+                    <div class="card-description word-break">
+                        {{drink.description}}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}

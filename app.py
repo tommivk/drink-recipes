@@ -21,7 +21,22 @@ def index():
     if "username" not in session:
         return redirect("/login")
 
-    return render_template("index.html")
+    best = db.session.execute(
+        '''SELECT D.id, D.name, D.description, D.image_id, CAST(SUM(R.stars) as float) / COUNT(R.stars) as rating
+           FROM Drinks D
+           JOIN Ratings R ON D.id=R.drink_id
+           GROUP BY D.id
+           ORDER BY rating DESC, COUNT(R.id) DESC LIMIT 5
+           ''').fetchall()
+
+    newest = db.session.execute(
+        '''SELECT  D.id, D.name, D.description, D.image_id, COALESCE(CAST(SUM(R.stars) as float) / COUNT(R.stars), 0) as rating
+           FROM Drinks D
+           LEFT JOIN Ratings R ON D.id=R.drink_id
+           GROUP BY D.id
+           ORDER BY timestamp DESC LIMIT 4''').fetchall()
+
+    return render_template("index.html", best=best, newest=newest)
 
 
 @app.route("/signup", methods=["POST", "GET"])
