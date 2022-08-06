@@ -18,6 +18,9 @@ db = SQLAlchemy(app)
 
 @app.route("/")
 def index():
+    if "username" not in session:
+        return redirect("/login")
+
     return render_template("index.html")
 
 
@@ -58,6 +61,13 @@ def signup():
         return redirect("/")
     else:
         return render_template("signup.html")
+
+
+@app.route("/login", methods=["GET"])
+def login():
+    if "username" in session:
+        return redirect("/")
+    return render_template("login.html")
 
 
 @app.route("/login", methods=["POST"])
