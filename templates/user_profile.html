@@ -1,0 +1,28 @@
+{% extends "profile_page.html" %}
+{% block title %}{{username}}{% endblock %}
+{% block page_content %}
+
+<div class="profile-container">
+    <div class="profile-top">
+        <div class="profile-avatar"></div>
+    </div>
+    <div class="profile-bottom">
+        <h1 class="title">{{username}}</h1>
+        <table>
+            <tr>
+                <td>Member since:</td>
+                <td>{{user_data.join_date}}</td>
+            </tr>
+            <tr>
+                <td>Recipes uploaded:</td>
+                <td>{{user_data.recipe_count}}</td>
+            </tr>
+            <tr>
+                <td>Comments posted:</td>
+                <td>{{user_data.comment_count}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

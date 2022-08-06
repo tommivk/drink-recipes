@@ -733,6 +733,39 @@ input[type="file"]:hover+label {
     margin-right: 10px;
 }
 
+.profile-container {
+    width: 400px;
+    height: 500px;
+    max-width: 95vw;
+    background: var(--drk-gray);
+    margin: auto;
+    margin-top: 40px;
+    border-radius: 10px;
+    color: white;
+}
+
+.profile-top {
+    height: 200px;
+    display: grid;
+    place-items: center;
+}
+
+.profile-bottom {
+    display: grid;
+    place-items: center;
+}
+
+.profile-bottom td {
+    padding: 2px 10px;
+}
+
+.profile-avatar {
+    height: 150px;
+    width: 150px;
+    background: rgb(67, 67, 70);
+    border-radius: 50%;
+}
+
 @media (max-width: 800px) {
     .nav-toggle {
         display: block;

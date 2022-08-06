@@ -420,7 +420,17 @@ def serve_img(id):
 @app.route("/<string:username>")
 def profile_page(username):
     get_logged_user()
-    return render_template("profile_page.html", username=username)
+    user_id = db.session.execute("SELECT id FROM Users WHERE LOWER(username)=:username", {
+                                 "username": username.lower()}).fetchone()
+    if not user_id:
+        return abort(404)
+
+    user_data = db.session.execute('''SELECT TO_CHAR(join_date, 'MM/YYYY') as join_date,
+                                      (SELECT COUNT(*) FROM Comments WHERE user_id=:user_id) as comment_count,
+                                      (SELECT COUNT(*) FROM Drinks WHERE user_id=:user_id) as recipe_count
+                                      FROM Users WHERE LOWER(username)=:username''', {
+                                   "username": username.lower(), "user_id": user_id[0]}).fetchone()
+    return render_template("user_profile.html", user_data=user_data, username=username)
 
 
 @app.route("/<string:username>/ingredients", methods=["GET"])
