@@ -305,7 +305,9 @@ body {
 }
 
 .add-recipe-button {
-    float: right;
+    position: absolute;
+    top: 20px;
+    right: 20px;
     border-radius: 5px;
 }
 
@@ -669,6 +671,7 @@ input[type="file"]:hover+label {
     overflow: auto;
     height: calc(100vh - var(--navbar-height));
     width: 100vw;
+    position: relative;
 }
 
 .drink-top-section {
