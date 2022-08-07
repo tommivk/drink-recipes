@@ -5,16 +5,20 @@
 
 <div class="container">
     <h1 class="title">Drink Recipes</h1>
+
     <div class="filter-bar">
-        Show drinks that can be made by using ingredients on your list
-        {% if request.args.get("owned_ingredients") == "true"%}
-        <input type="checkbox" onchange="handleFilterChange(this.checked)" checked>
-        {% else %}
-        <input type="checkbox" onchange="handleFilterChange(this.checked)">
-        {% endif %}
-        <a href="/drinks/add">
-            <button class="add-recipe-button btn">Add new recipe</button>
-        </a>
+        <form id="filter-form" method="GET" action="/drinks">
+            <div class="flex-align">
+                <input type="text" name="search" placeholder="Search for recipes..." autocomplete="off"
+                    value="{{search}}">
+                <button type="submit"><span><i class="fa-solid fa-magnifying-glass"></i></span></button>
+            </div>
+            <div class="flex-align filter-checkbox">
+                <label>Show only drinks that can be made by using ingredients on your list</label>
+                <input name="filter" type="checkbox" {% if request.args.get('filter')=='on' %} checked {% endif %}
+                    onchange="handleFilterChange()">
+            </div>
+        </form>
     </div>
 
     {% if drinks|length == 0 %}
@@ -51,7 +55,7 @@
 
 <script>
     function handleFilterChange(value) {
-        window.location.replace(`/drinks?owned_ingredients=${value}`);
+        document.getElementById("filter-form").submit()
     }
 </script>
 

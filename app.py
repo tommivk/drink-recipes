@@ -149,10 +149,11 @@ def indgredients_post():
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
     (_, user_id) = get_logged_user()
-    filter_set = request.args.get(
-        "owned_ingredients", default="false", type=str)
 
-    if filter_set == "true":
+    filter_set = request.args.get("filter", None)
+    search = request.args.get("search", "")
+
+    if filter_set:
         drinks = db.session.execute('''SELECT D.id, name, description, image_id,
                     COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
                     FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
@@ -161,14 +162,16 @@ def drinks_get():
                     WHERE UI.user_id=:user_id AND UI.ingredient_id IN (
                     SELECT DISTINCT DI2.ingredient_id
                     FROM DrinkIngredients DI2
-                    WHERE DI2.ingredient_id=DI.ingredient_id)))''', {"user_id": user_id}).fetchall()
+                    WHERE DI2.ingredient_id=DI.ingredient_id AND LOWER(name) LIKE :search)))''',
+                                    {"user_id": user_id, "search": f"%{search.lower()}%"}).fetchall()
     else:
         drinks = db.session.execute('''SELECT id, name, description, image_id,
                                     COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
                                     FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                                    FROM drinks D''').fetchall()
+                                    FROM drinks D WHERE LOWER(name) LIKE :search''',
+                                    {"search": f"%{search.lower()}%"}).fetchall()
 
-    return render_template("drinks.html", drinks=drinks)
+    return render_template("drinks.html", drinks=drinks, search=search)
 
 
 @app.route("/drinks", methods=["POST"])
