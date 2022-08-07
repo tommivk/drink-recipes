@@ -7,7 +7,7 @@
         <h1 class="title word-break">{{drink.name}}</h1>
         <p class="text-center word-break">{{drink.description}}</p>
         <div class="drink-top-section">
-            <p>Author: <a href="/{{drink.author}}">{{drink.author}}</a></p>
+            <p>Author: <a href="/users/{{drink.author}}">{{drink.author}}</a></p>
             <div class="flex-align">
                 <i class="fa-solid fa-martini-glass category-icon"></i>
                 <p>{{drink.category}}</p>
@@ -73,7 +73,7 @@
                 <li>
                     <div class="comment">
                         <div class="flex-align">
-                            <a href="/{{comment.username}}">
+                            <a href="/users/{{comment.username}}">
                                 <h3 class="comment-username">
                                     {{comment.username}}
                                 </h3>
