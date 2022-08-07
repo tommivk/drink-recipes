@@ -5,11 +5,11 @@
 <div class="container">
     <h1 class="title">{{username}}</h1>
     <div class="profile-links">
-        <a href="/{{username}}">Profile</a>
-        <a href="/{{username}}/uploaded">Uploaded drink recipes</a>
+        <a href="/users/{{username}}">Profile</a>
+        <a href="/users/{{username}}/uploaded">Uploaded drink recipes</a>
         {% if username == session.username %}
-        <a href="/{{username}}/favourited">Favourited drink recipes</a>
-        <a href="/{{username}}/ingredients">My ingredients</a>
+        <a href="/users/{{username}}/favourited">Favourited drink recipes</a>
+        <a href="/users/{{username}}/ingredients">My ingredients</a>
         {% endif %}
     </div>
     {% block page_content %}{% endblock %}

@@ -328,7 +328,7 @@ def delete_drink(id):
     else:
         return abort(403)
 
-    return redirect(f"/{username}/uploaded")
+    return redirect(f"/users/{username}/uploaded")
 
 
 @app.route("/drinks/<int:id>/comment", methods=["POST"])
@@ -442,7 +442,7 @@ def serve_img(id):
     return response
 
 
-@app.route("/<string:username>")
+@app.route("/users/<string:username>")
 def profile_page(username):
     get_logged_user()
     user_id = db.session.execute("SELECT id FROM Users WHERE LOWER(username)=:username", {
@@ -458,7 +458,7 @@ def profile_page(username):
     return render_template("user_profile.html", user_data=user_data, username=username)
 
 
-@app.route("/<string:username>/ingredients", methods=["GET"])
+@app.route("/users/<string:username>/ingredients", methods=["GET"])
 def user_ingredients(username):
     (user, user_id) = get_logged_user()
 
@@ -475,7 +475,7 @@ def user_ingredients(username):
     return render_template("user_ingredients.html", username=username, ingredients=ingredients, users_ingredients=users_ingredients)
 
 
-@app.route("/<string:username>/ingredients", methods=["POST"])
+@app.route("/users/<string:username>/ingredients", methods=["POST"])
 def favourite_ingredient(username):
     (user, user_id) = get_logged_user()
     check_csrf()
@@ -490,10 +490,10 @@ def favourite_ingredient(username):
         sql, {"user_id": user_id, "ingredient_id": ingredient_id})
     db.session.commit()
 
-    return redirect(f"/{username}/ingredients")
+    return redirect(f"/users/{username}/ingredients")
 
 
-@app.route("/<string:username>/uploaded", methods=["GET"])
+@app.route("/users/<string:username>/uploaded", methods=["GET"])
 def user_uploaded(username):
     get_logged_user()
 
@@ -507,7 +507,7 @@ def user_uploaded(username):
     return render_template("user_uploaded.html", username=username, uploaded_drinks=uploaded_drinks)
 
 
-@app.route("/<string:username>/favourited", methods=["GET"])
+@app.route("/users/<string:username>/favourited", methods=["GET"])
 def user_favourited(username):
     (user, _) = get_logged_user()
 
@@ -525,7 +525,7 @@ def user_favourited(username):
     return render_template("user_favourited.html", username=username, favourited_drinks=favourited_drinks)
 
 
-@app.route("/<string:username>/ingredients/delete", methods=["POST"])
+@app.route("/users/<string:username>/ingredients/delete", methods=["POST"])
 def delete_favourite_ingredient(username):
     (user, user_id) = get_logged_user()
     check_csrf()
@@ -541,7 +541,7 @@ def delete_favourite_ingredient(username):
     db.session.commit()
 
     flash("Ingredient removed")
-    return redirect(f"/{username}/ingredients")
+    return redirect(f"/users/{username}/ingredients")
 
 
 @app.route("/admin", methods=["GET"])

@@ -24,7 +24,7 @@
                 {% if session.admin %}
                 <li><a href="/admin">Admin</a></li>
                 {% endif %}
-                <li><a href="/{{session.username}}">Profile</a></li>
+                <li><a href="/users/{{session.username}}">Profile</a></li>
                 <li><a href="/logout">Logout</a></li>
                 {% else %}
                 {%if request.path == "/login" or request.path == "/" %}

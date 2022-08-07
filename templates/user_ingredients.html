@@ -9,7 +9,7 @@
     <p class="text-center">No ingredients added yet</p>
     {% endif %}
 
-    <form action="/{{session.username}}/ingredients/delete" method="post">
+    <form action="/users/{{session.username}}/ingredients/delete" method="post">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <ul>
             {% for ingredient in users_ingredients %}
@@ -18,7 +18,7 @@
         </ul>
     </form>
 
-    <form action="/{{session.username}}/ingredients" method="post">
+    <form action="/users/{{session.username}}/ingredients" method="post">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <select name="ingredient">
             {% for ingredient in ingredients %}
