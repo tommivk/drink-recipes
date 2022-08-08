@@ -249,7 +249,8 @@ def drinks_post():
 @app.route("/drinks/add", methods=["GET"])
 def new_drink_form():
     get_logged_user()
-    ingredients = db.session.execute("SELECT * FROM ingredients").fetchall()
+    ingredients = db.session.execute(
+        "SELECT * FROM ingredients ORDER BY name").fetchall()
     categories = db.session.execute(
         "SELECT id, name FROM DrinkCategories").fetchall()
     return render_template("drink_form.html", ingredients=ingredients, categories=categories)
@@ -468,7 +469,7 @@ def user_ingredients(username):
     if username != user:
         return abort(403)
 
-    sql = "SELECT * FROM Ingredients WHERE id NOT IN (SELECT ingredient_id FROM UsersIngredients WHERE user_id=:user_id)"
+    sql = "SELECT * FROM Ingredients WHERE id NOT IN (SELECT ingredient_id FROM UsersIngredients WHERE user_id=:user_id) ORDER BY name"
     ingredients = db.session.execute(sql, {"user_id": user_id}).fetchall()
 
     sql = "SELECT * FROM UsersIngredients U JOIN Ingredients I ON U.ingredient_id=I.id WHERE U.user_id=:user_id"
