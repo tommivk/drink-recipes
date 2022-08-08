@@ -2,22 +2,9 @@
 {% block title %}{{username}}{% endblock %}
 
 {% block page_content %}
-<div>
-    <h2 class="title">My ingredients</h2>
+<h2 class="title">My ingredients</h2>
 
-    {% if users_ingredients|length==0 %}
-    <p class="text-center">No ingredients added yet</p>
-    {% endif %}
-
-    <form action="/users/{{session.username}}/ingredients/delete" method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <ul>
-            {% for ingredient in users_ingredients %}
-            <li> {{ingredient.name}} <button type="submit" name="ingredient" value="{{ingredient.id}}">X</button></li>
-            {% endfor %}
-        </ul>
-    </form>
-
+<div class="users-ingredients">
     <form action="/users/{{session.username}}/ingredients" method="post">
         <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <select name="ingredient">
@@ -28,5 +15,25 @@
         <button type="submit">Add</button>
     </form>
 
+    {% if users_ingredients|length==0 %}
+    <p class="text-center">No ingredients added yet</p>
+    {% endif %}
+
+    <form action="/users/{{session.username}}/ingredients/delete" method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <div>
+            {% for ingredient in users_ingredients %}
+            <div class="flex-align user-ingredient">
+                <p class="word-break">{{ingredient.name}}</p>
+                <button class="ingredient-delete-btn" type="submit" name="ingredient" value="{{ingredient.id}}">
+                    <span>
+                        <i class="fa-solid fa-trash-can"></i>
+                    </span>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </form>
 </div>
+
 {% endblock %}
