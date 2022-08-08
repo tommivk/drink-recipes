@@ -31,8 +31,8 @@
                 onsubmit="return handleSubmit(this, '{{drink.name}}')">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                 {% if username == session.username %}
-                <button class="remove-fav-btn" type="submit">
-                    <i class="fa-solid fa-heart-crack remove-fav-icon"></i>
+                <button class="card-icon-btn" type="submit">
+                    <i class="fa-solid fa-heart-crack"></i>
                 </button>
                 {% endif %}
             </form>
