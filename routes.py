@@ -164,6 +164,8 @@ def drinks_post():
         return "Invalid category id"
 
     image_id = images.add_image(image_data)
+    if not image_id:
+        return abort(500)
 
     drink_id = drinks.add_drink(
         name, description, recipe, image_id, category_id)
