@@ -2,15 +2,13 @@ from db import db
 from app import app
 import json
 import urllib
-import secrets
 import re
-from datetime import datetime
 from flask import abort, render_template, request, session, redirect, make_response, flash
-from werkzeug.security import check_password_hash, generate_password_hash
 import drinks
+import users
 
 
-@app.route("/")
+@app.route("/", methods=["GET"])
 def index():
     if "username" not in session:
         return redirect("/login")
@@ -21,43 +19,47 @@ def index():
     return render_template("index.html", best=best, newest=newest)
 
 
-@app.route("/signup", methods=["POST", "GET"])
+@app.route("/signup", methods=["GET"])
+def signup_form():
+    return render_template("signup.html")
+
+
+@app.route("/signup", methods=["POST"])
 def signup():
-    if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
-        password_confirm = request.form["passwordConfirm"]
+    username = request.form["username"]
+    password = request.form["password"]
+    password_confirm = request.form["passwordConfirm"]
 
-        if len(username) < 3 or len(username) > 20:
-            return "Username should be between 3 and 20 characters long"
+    if len(username) < 3 or len(username) > 20:
+        flash("Username should be between 3 and 20 characters long", "error")
+        return redirect("/signup")
 
-        if password != password_confirm:
-            return "Password does not match the password confirmation"
+    if password != password_confirm:
+        flash("Password does not match the password confirmation", "error")
+        return redirect("/signup")
 
-        if len(password) < 6:
-            return "Password should be minimum of 6 characters long"
+    if len(password) < 6:
+        flash("Password should be minimum of 6 characters long", "error")
+        return redirect("/signup")
 
-        pattern = re.compile("^[a-zA-Z0-9åäöÅÄÖ]*$")
+    pattern = re.compile("^[a-zA-Z0-9åäöÅÄÖ]*$")
 
-        if not pattern.match(username):
-            flash("Username contains invalid characters", "error")
-            return redirect("/signup")
+    if not pattern.match(username):
+        flash("Username contains invalid characters", "error")
+        return redirect("/signup")
 
-        username_exists = db.session.execute(
-            "SELECT 1 FROM Users WHERE LOWER(username)=:username", {"username": username.lower()}).fetchone()
-        if username_exists:
-            flash("Username is taken", "error")
-            return redirect("/signup")
+    username_exists = users.username_exists(username)
 
-        hash = generate_password_hash(password)
-        sql = "INSERT INTO Users (username, password_hash, join_date, admin) VALUES(:username, :password_hash, :join_date, false)"
-        db.session.execute(
-            sql, {"username": username, "password_hash": hash, "join_date": datetime.now()})
-        db.session.commit()
+    if username_exists:
+        flash("Username is taken", "error")
+        return redirect("/signup")
+
+    if users.add_user(username, password):
         flash("Successfully signed up")
+        users.login(username, password)
         return redirect("/")
     else:
-        return render_template("signup.html")
+        return abort(500)
 
 
 @app.route("/login", methods=["GET"])
@@ -72,36 +74,17 @@ def login_post():
     username = request.form["username"]
     password = request.form["password"]
 
-    sql = "SELECT id, username, password_hash, admin FROM users WHERE LOWER(username)=:username"
-    result = db.session.execute(sql, {"username": username.lower()})
-    user = result.fetchone()
-
-    if not user:
+    if users.login(username, password):
+        flash(f"Logged in as {username}")
+        return redirect("/")
+    else:
         flash("Invalid credentials", "error")
         return redirect("/login")
-    else:
-        hash = user.password_hash
-
-        if check_password_hash(hash, password):
-            session["username"] = user.username
-            session["user_id"] = user.id
-            session["csrf_token"] = secrets.token_hex(16)
-            if user.admin == True:
-                session["admin"] = True
-            flash(f"Logged in as {user.username}")
-            return redirect("/")
-        else:
-            flash("Invalid credentials", "error")
-            return redirect("/login")
 
 
-@app.route("/logout")
+@app.route("/logout", methods=["GET"])
 def logout():
-    del session["username"]
-    del session["user_id"]
-    del session["csrf_token"]
-    if "admin" in session:
-        del session["admin"]
+    users.logout()
     return redirect("/")
 
 
@@ -489,9 +472,9 @@ def get_logged_user():
         return (session["username"], session["user_id"])
 
 
-@app.errorhandler(401)
-def not_logged_in(e):
-    return render_template('index.html'), 401
+# @app.errorhandler(401)
+# def not_logged_in(e):
+#     return render_template('index.html'), 401
 
 
 def check_csrf():
