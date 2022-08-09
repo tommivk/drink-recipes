@@ -6,6 +6,9 @@ import re
 from flask import abort, render_template, request, session, redirect, make_response, flash
 import drinks
 import users
+import ratings
+import ingredients
+import images
 
 
 @app.route("/", methods=["GET"])
@@ -91,9 +94,8 @@ def logout():
 @app.route("/ingredients", methods=["GET"])
 def ingredients_get():
     get_logged_user()
-    result = db.session.execute("SELECT name FROM ingredients")
-    ingredients = result.fetchall()
-    return render_template("ingredients.html", ingredients=ingredients)
+    ingredient_names = ingredients.get_names()
+    return render_template("ingredients.html", ingredients=ingredient_names)
 
 
 @app.route("/ingredients", methods=["POST"])
@@ -103,11 +105,11 @@ def indgredients_post():
 
     name = request.form["name"]
     type = request.form["type"]
-    sql = "INSERT INTO ingredients (name, type) VALUES(:name, :type)"
-    db.session.execute(sql, {"name": name, "type": type})
-    db.session.commit()
 
-    return redirect("/ingredients")
+    if ingredients.add_ingredient(name, type):
+        flash("Ingredient added")
+
+    return redirect(request.referrer)
 
 
 @app.route("/drinks", methods=["GET"])
@@ -156,26 +158,24 @@ def drinks_post():
     if len(image_data) > 200*1024:
         return "Maximum filesize is 200kB"
 
-    result = db.session.execute("SELECT id FROM DrinkCategories").fetchall()
+    result = drinks.get_category_ids()
     category_ids = [r[0] for r in result]
     if int(category_id) not in category_ids:
         return "Invalid category id"
 
-    sql = "INSERT INTO Images (data) VALUES(:data) RETURNING id"
-    result = db.session.execute(sql, {"data": image_data})
-    image_id = result.fetchone()[0]
+    image_id = images.add_image(image_data)
 
     drink_id = drinks.add_drink(
         name, description, recipe, image_id, category_id)
     if not drink_id:
         return abort(500)
 
-    result = db.session.execute("SELECT id FROM Ingredients").fetchall()
+    result = ingredients.get_ids()
     ingredient_ids = [r[0] for r in result]
 
-    ingredients = json.loads(urllib.parse.unquote(ingredients_data))
+    ingredients_list = json.loads(urllib.parse.unquote(ingredients_data))
 
-    for ingredient in ingredients:
+    for ingredient in ingredients_list:
         ingredient_id = ingredient['ingredientId']
         measure = ingredient['measure']
         unit = ingredient['unit']
@@ -197,10 +197,9 @@ def drinks_post():
 @app.route("/drinks/add", methods=["GET"])
 def new_drink_form():
     get_logged_user()
-    ingredients = db.session.execute(
-        "SELECT * FROM ingredients ORDER BY name").fetchall()
+    all_ingredients = ingredients.get_all()
     categories = drinks.get_categories()
-    return render_template("drink_form.html", ingredients=ingredients, categories=categories)
+    return render_template("drink_form.html", ingredients=all_ingredients, categories=categories)
 
 
 @app.route("/drinks/categories", methods=["POST"])
@@ -294,19 +293,18 @@ def add_review(id):
     if stars not in range(1, 6):
         return "Invalid amount of stars"
 
-    review_exists = db.session.execute("SELECT 1 FROM ratings WHERE user_id=:user_id AND drink_id=:drink_id", {
-                                       "user_id": user_id, "drink_id": id}).fetchone()
+    review_exists = ratings.rating_exists(id)
 
     if review_exists:
-        sql = "UPDATE ratings SET stars=:stars WHERE user_id=:user_id AND drink_id=:drink_id"
-        flash("Rating updated")
+        if ratings.update_rating(id, stars):
+            flash("Rating updated")
+        else:
+            return abort(500)
     else:
-        sql = "INSERT INTO ratings (user_id, drink_id, stars) VALUES(:user_id, :drink_id, :stars)"
-        flash("Rating added")
-
-    db.session.execute(
-        sql, {"user_id": user_id, "drink_id": id, "stars": stars})
-    db.session.commit()
+        if ratings.add_rating(id, stars):
+            flash("Rating added")
+        else:
+            return abort(500)
 
     return redirect(f"/drinks/{id}")
 
@@ -348,8 +346,7 @@ def favourite_drink_delete(id):
 
 @app.route("/images/<int:id>")
 def serve_img(id):
-    sql = "SELECT data FROM images WHERE id=:id"
-    data = db.session.execute(sql, {"id": id}).fetchone()
+    data = images.get_image(id)
     if not data:
         return abort(404)
     response = make_response(bytes(data[0]))
@@ -360,16 +357,11 @@ def serve_img(id):
 @app.route("/users/<string:username>")
 def profile_page(username):
     get_logged_user()
-    user_id = db.session.execute("SELECT id FROM Users WHERE LOWER(username)=:username", {
-                                 "username": username.lower()}).fetchone()
+    user_id = users.get_user_id(username)
     if not user_id:
         return abort(404)
 
-    user_data = db.session.execute('''SELECT TO_CHAR(join_date, 'MM/YYYY') as join_date,
-                                      (SELECT COUNT(*) FROM Comments WHERE user_id=:user_id) as comment_count,
-                                      (SELECT COUNT(*) FROM Drinks WHERE user_id=:user_id) as recipe_count
-                                      FROM Users WHERE LOWER(username)=:username''', {
-                                   "username": username.lower(), "user_id": user_id[0]}).fetchone()
+    user_data = users.get_user_data(user_id)
     return render_template("user_profile.html", user_data=user_data, username=username)
 
 
@@ -380,12 +372,8 @@ def user_ingredients(username):
     if username != user:
         return abort(403)
 
-    sql = "SELECT * FROM Ingredients WHERE id NOT IN (SELECT ingredient_id FROM UsersIngredients WHERE user_id=:user_id) ORDER BY name"
-    ingredients = db.session.execute(sql, {"user_id": user_id}).fetchall()
-
-    sql = "SELECT * FROM UsersIngredients U JOIN Ingredients I ON U.ingredient_id=I.id WHERE U.user_id=:user_id"
-    users_ingredients = db.session.execute(
-        sql, {"user_id": user_id}).fetchall()
+    ingredients = users.get_non_favourited_ingredients()
+    users_ingredients = users.get_users_ingredients()
 
     return render_template("user_ingredients.html", username=username, ingredients=ingredients, users_ingredients=users_ingredients)
 
@@ -400,10 +388,8 @@ def favourite_ingredient(username):
 
     ingredient_id = request.form["ingredient"]
 
-    sql = "INSERT INTO UsersIngredients(user_id, ingredient_id) VALUES(:user_id, :ingredient_id)"
-    db.session.execute(
-        sql, {"user_id": user_id, "ingredient_id": ingredient_id})
-    db.session.commit()
+    if users.add_ingredient(ingredient_id):
+        flash("Ingredient added")
 
     return redirect(f"/users/{username}/ingredients")
 
@@ -412,12 +398,7 @@ def favourite_ingredient(username):
 def user_uploaded(username):
     get_logged_user()
 
-    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
-                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                FROM Drinks D JOIN Users U on U.id = D.user_id WHERE U.username=:username
-            '''
-    uploaded_drinks = db.session.execute(
-        sql, {"username": username}).fetchall()
+    uploaded_drinks = users.uploaded_drinks(username)
 
     return render_template("user_uploaded.html", username=username, uploaded_drinks=uploaded_drinks)
 
@@ -426,16 +407,10 @@ def user_uploaded(username):
 def user_favourited(username):
     (user, _) = get_logged_user()
 
-    if username != user:
+    if not users.is_logged_user(username):
         return abort(403)
 
-    sql = '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
-                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                FROM FavouriteDrinks F
-                JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
-            '''
-    response = db.session.execute(sql, {"username": username})
-    favourited_drinks = response.fetchall()
+    favourited_drinks = users.favourited_drinks(username)
 
     return render_template("user_favourited.html", username=username, favourited_drinks=favourited_drinks)
 
@@ -445,17 +420,14 @@ def delete_favourite_ingredient(username):
     (user, user_id) = get_logged_user()
     check_csrf()
 
-    if username != user:
+    if not users.is_logged_user(username):
         return abort(403)
 
     ingredient_id = request.form["ingredient"]
 
-    sql = "DELETE FROM UsersIngredients WHERE ingredient_id=:ingredient_id AND user_id=:user_id"
-    db.session.execute(
-        sql, {"ingredient_id": ingredient_id, "user_id": user_id})
-    db.session.commit()
+    if users.remove_ingredient(ingredient_id):
+        flash("Ingredient removed")
 
-    flash("Ingredient removed")
     return redirect(f"/users/{username}/ingredients")
 
 

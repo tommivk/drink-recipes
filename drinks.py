@@ -61,6 +61,10 @@ def get_categories():
         "SELECT id, name FROM DrinkCategories").fetchall()
 
 
+def get_category_ids():
+    return db.session.execute("SELECT id FROM DrinkCategories").fetchall()
+
+
 def get_by_id(id):
     try:
         user_id = session["user_id"]

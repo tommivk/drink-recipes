@@ -40,9 +40,90 @@ def add_user(username, password):
         return False
 
 
+def get_user_data(user_id):
+    return db.session.execute('''SELECT TO_CHAR(join_date, 'MM/YYYY') as join_date,
+                                      (SELECT COUNT(*) FROM Comments WHERE user_id=:user_id) as comment_count,
+                                      (SELECT COUNT(*) FROM Drinks WHERE user_id=:user_id) as recipe_count
+                                      FROM Users WHERE id=:user_id''', {
+        "user_id": user_id}).fetchone()
+
+
+def get_user_id(username):
+    try:
+        return db.session.execute("SELECT id FROM Users WHERE LOWER(username)=:username", {
+            "username": username.lower()}).fetchone()[0]
+    except:
+        return None
+
+
 def logout():
     del session["username"]
     del session["user_id"]
     del session["csrf_token"]
     if "admin" in session:
         del session["admin"]
+
+
+def favourited_drinks(username):
+    return db.session.execute(
+        '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
+                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
+                FROM FavouriteDrinks F
+                JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
+            ''', {"username": username}).fetchall()
+
+
+def uploaded_drinks(username):
+    return db.session.execute(
+        '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
+                COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
+                FROM Drinks D JOIN Users U on U.id = D.user_id WHERE U.username=:username
+            ''', {"username": username}).fetchall()
+
+
+def is_logged_user(username):
+    if username != session["username"]:
+        return False
+    return True
+
+
+def get_non_favourited_ingredients():
+    user_id = session["user_id"]
+    return db.session.execute(
+        '''SELECT * FROM Ingredients
+            WHERE id NOT IN (SELECT ingredient_id FROM UsersIngredients WHERE user_id=:user_id)
+            ORDER BY name
+        ''', {"user_id": user_id}).fetchall()
+
+
+def get_users_ingredients():
+    user_id = session["user_id"]
+    return db.session.execute(
+        '''SELECT * FROM UsersIngredients U
+            JOIN Ingredients I ON U.ingredient_id=I.id
+            WHERE U.user_id=:user_id
+        ''', {"user_id": user_id}).fetchall()
+
+
+def add_ingredient(ingredient_id):
+    try:
+        user_id = session["user_id"]
+        db.session.execute(
+            "INSERT INTO UsersIngredients(user_id, ingredient_id) VALUES(:user_id, :ingredient_id)",
+            {"user_id": user_id, "ingredient_id": ingredient_id})
+        db.session.commit()
+        return True
+    except:
+        return False
+
+
+def remove_ingredient(ingredient_id):
+    try:
+        user_id = session["user_id"]
+        db.session.execute(
+            "DELETE FROM UsersIngredients WHERE ingredient_id=:ingredient_id AND user_id=:user_id",
+            {"ingredient_id": ingredient_id, "user_id": user_id})
+        db.session.commit()
+        return True
+    except:
+        return False
