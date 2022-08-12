@@ -1,0 +1,124 @@
+.home-page {
+    width: 1400px;
+    margin: auto;
+    max-width: 90vw;
+    display: grid;
+    margin-top: 40px;
+    margin-bottom: 40px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: fit-content(100%) fit-content(100%);
+    grid-template-areas:
+        "featured featured top-5"
+        "newest newest newest";
+    row-gap: 40px;
+    column-gap: 20px;
+}
+
+.featured-link {
+    grid-area: featured;
+    text-decoration: none;
+}
+
+.featured {
+    background: var(--drk-gray);
+    border-radius: 10px;
+    color: white;
+    display: flex;
+    height: 100%;
+}
+
+.top-5 {
+    grid-area: top-5;
+    background: var(--drk-gray);
+    border-radius: 10px;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    color: white;
+    width: 100%;
+}
+
+.newest-drinks {
+    grid-area: newest;
+    display: flex;
+    flex-direction: column;
+    background: var(--drk-gray);
+    color: white;
+    box-sizing: border-box;
+    border-radius: 10px;
+    height: fit-content;
+}
+
+.newest-drinks-cards {
+    padding: 20px;
+    display: flex;
+    gap: 20px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.featured .stars,
+.newest-drinks .stars {
+    margin-top: auto;
+    pointer-events: none;
+    --fillbg: var(--light-gray);
+}
+
+.featured-image {
+    width: 60%;
+    height: 100%;
+}
+
+.featured-right {
+    width: 50%;
+    min-width: 280px;
+    height: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.featured-text {
+    height: calc(100% - 70px);
+}
+
+.featured-bottom {
+    height: fit-content;
+}
+
+.featured img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 10px 0px 0px 10px;
+}
+
+.top-5 a {
+    text-decoration: none;
+    color: white;
+}
+
+.top-5 a:hover {
+    background: var(--green-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.top-5 ol {
+    font-size: 1.2em;
+    margin: auto;
+    width: fit-content;
+    margin-left: 30px;
+}
+
+@media (max-width: 1000px) {
+    .home-page {
+        grid-template-columns: 90vw;
+        grid-template-areas:
+            "featured"
+            "newest"
+            "newest"
+            "newest"
+            "top-5";
+    }
+}

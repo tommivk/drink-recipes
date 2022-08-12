@@ -1,0 +1,119 @@
+.drink-container {
+    max-width: 100vw;
+    width: 600px;
+    margin: auto;
+    padding: 0px 10px;
+    box-sizing: border-box;
+}
+
+.drink-img {
+    width: 100%;
+    max-height: 700px;
+}
+
+.drink-favourite-icon {
+    font-size: 20px;
+    color: var(--drk-gray);
+    color: white;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.fav-drink-btn {
+    background: var(--drk-gray);
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    box-sizing: content-box;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.fav-drink-btn:disabled {
+    opacity: 0.2;
+    pointer-events: none;
+}
+
+
+.drink-top-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 5px;
+}
+
+.rating-count {
+    color: grey;
+    margin-left: 15px;
+}
+
+.drink-bottom-section {
+    padding: 5px 5px;
+    box-sizing: border-box;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.category-icon {
+    font-size: 15px;
+    color: rgb(61, 63, 61);
+    margin-right: 10px;
+}
+
+.drink-instructions {
+    white-space: pre-line;
+}
+
+.comment-list {
+    list-style: none;
+    padding: 0px;
+    border-bottom: 2px solid grey;
+    margin-bottom: 60px;
+}
+
+.comment {
+    position: relative;
+    border-top: 2px solid grey;
+}
+
+.comment .stars {
+    pointer-events: none;
+}
+
+.comment a {
+    color: black;
+}
+
+.comment-username {
+    display: inline-block;
+    margin: 10px 10px 10px 0px;
+}
+
+.comment-delete-btn {
+    position: absolute;
+    bottom: 0px;
+    right: 10px;
+    background: none;
+    padding: 0px;
+    border: none;
+}
+
+.comment-text {
+    margin: 25px 0px;
+    max-width: calc(100% - 40px)
+}
+
+.comment-delete-icon {
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.comment-date {
+    color: gray;
+    margin-left: auto;
+    margin-right: 10px;
+}

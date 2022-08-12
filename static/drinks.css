@@ -1,0 +1,53 @@
+.filter-bar {
+    padding: 20px;
+    box-sizing: border-box;
+    width: 600px;
+    max-width: 95vw;
+    margin: auto;
+}
+
+.filter-checkbox {
+    width: fit-content;
+    margin: 20px auto;
+    padding: 0px 10px;
+}
+
+.filter-checkbox input {
+    margin-left: 10px;
+}
+
+.filter-bar input[type=text] {
+    padding: 10px 30px;
+    width: 100%;
+    border: none;
+    background: whitesmoke;
+    border-radius: 7px 0px 0px 7px;
+    border-bottom: 2px solid transparent;
+}
+
+.filter-bar button {
+    height: 37px;
+    width: 60px;
+    padding: 0px;
+    border-radius: 0px 7px 7px 0px;
+    border: 2px solid var(--drk-gray);
+    background: var(--drk-gray);
+    color: white;
+    cursor: pointer;
+}
+
+.filter-bar input[type=text]:focus,
+.filter-bar input[type=text]:focus~button {
+    outline: 2px solid var(--drk-gray);
+}
+
+.filter-bar button:hover {
+    color: aqua;
+}
+
+.add-recipe-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border-radius: 5px;
+}
