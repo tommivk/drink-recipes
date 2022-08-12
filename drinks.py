@@ -33,7 +33,8 @@ def filtered(search):
                     WHERE UI.user_id=:user_id AND UI.ingredient_id IN (
                     SELECT DISTINCT DI2.ingredient_id
                     FROM DrinkIngredients DI2
-                    WHERE DI2.ingredient_id=DI.ingredient_id AND LOWER(name) LIKE :search)))''',
+                    WHERE DI2.ingredient_id=DI.ingredient_id AND LOWER(name) LIKE :search)))
+                    ORDER BY timestamp DESC''',
         {"user_id": user_id, "search": f"%{search.lower()}%"}).fetchall()
 
 
@@ -41,7 +42,8 @@ def search(search):
     return db.session.execute('''SELECT id, name, description, image_id,
                                     COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
                                     FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                                    FROM drinks D WHERE LOWER(name) LIKE :search''',
+                                    FROM drinks D WHERE LOWER(name) LIKE :search
+                                    ORDER BY timestamp DESC''',
                               {"search": f"%{search.lower()}%"}).fetchall()
 
 
