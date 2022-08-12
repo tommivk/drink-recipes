@@ -4,11 +4,57 @@
 {% block content %}
 <div class="form-container">
     <h1>Sign up</h1>
-    <form action="/signup" method="POST">
+    <form id="sign-up-form" action="/signup" method="POST" onsubmit="return validate(this)">
         <input type="text" name="username" placeholder="Username" autocomplete="off" />
+        <p id="username-error" class="text-center error-text word-break hidden">Username must be between 3 and 20
+            characters long
+        </p>
         <input type="password" name="password" placeholder="Password" />
+        <p id="password-error" class="text-center error-text word-break hidden">Password must be minimum of 6 characters
+            long</p>
         <input type="password" name="passwordConfirm" placeholder="Confirm password" />
+        <p id="password-match-error" class="text-center error-text word-break hidden">Password confirmation does not
+            match the password
+        </p>
         <button class="btn" type="submit">Sign up</button>
     </form>
+
+    <script>
+        let usernameError = document.getElementById("username-error")
+        let passwordError = document.getElementById("password-error")
+        let passwordMatchError = document.getElementById("password-match-error")
+
+        function validate(form) {
+            hideErrors()
+
+            const username = form.username.value
+            const password = form.password.value
+            const passwordConfirm = form.passwordConfirm.value
+
+            let errors = false
+
+            if (username.length < 3 || username.length > 20) {
+                usernameError.classList.remove("hidden")
+                errors = true
+            }
+            if (password.length < 6) {
+                passwordError.classList.remove("hidden")
+                errors = true
+            }
+            if (password !== passwordConfirm) {
+                passwordMatchError.classList.remove("hidden")
+                errors = true
+            }
+
+            return !errors
+        }
+
+        function hideErrors() {
+            usernameError.classList.add("hidden")
+            passwordError.classList.add("hidden")
+            passwordMatchError.classList.add("hidden")
+        }
+    </script>
 </div>
+
 {% endblock %}
