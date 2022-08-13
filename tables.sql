@@ -1,14 +1,15 @@
+CREATE TABLE Images(
+    id SERIAL PRIMARY KEY,
+    data BYTEA
+);
+
 CREATE TABLE Users (
     id SERIAL PRIMARY KEY,
     username TEXT UNIQUE, 
     password_hash TEXT,
     join_date TIMESTAMP,
+    avatar_id INTEGER References Images,
     admin BOOLEAN
-);
-
-CREATE TABLE Images(
-    id SERIAL PRIMARY KEY,
-    data BYTEA
 );
 
 CREATE TABLE DrinkCategories(
