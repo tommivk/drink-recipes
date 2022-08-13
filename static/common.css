@@ -35,7 +35,7 @@ body {
     cursor: pointer;
     outline: none;
     border: none;
-    border-radius: 20px;
+    border-radius: 5px;
     color: white;
     margin: auto;
     background: rgba(33, 160, 171, 1);
@@ -47,6 +47,14 @@ body {
 
 .btn:focus {
     outline: 1px solid rgb(88, 82, 82);
+}
+
+.btn--grey {
+    background: #484646;
+}
+
+.btn--grey:hover {
+    background: #585757;
 }
 
 .flex-align {

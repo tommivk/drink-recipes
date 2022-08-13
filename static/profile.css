@@ -11,7 +11,7 @@
     margin: 0px 10px;
 }
 
-.profile-container {
+#profile-container {
     width: 400px;
     height: 500px;
     max-width: 95vw;
@@ -29,19 +29,79 @@
 }
 
 .profile-bottom {
-    display: grid;
-    place-items: center;
+    height: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .profile-bottom td {
     padding: 2px 10px;
 }
 
-.profile-avatar {
+#profile-avatar {
+    position: relative;
     height: 150px;
     width: 150px;
     background: rgb(67, 67, 70);
     border-radius: 50%;
+    pointer-events: none;
+}
+
+#profile-avatar:hover .fa-pencil {
+    color: greenyellow;
+}
+
+.avatar-edit-icon {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+#profile-update-buttons {
+    margin-top: auto;
+}
+
+#profile-update-buttons button {
+    margin: 0px 5px;
+}
+
+#avatarInput {
+    opacity: 0;
+}
+
+#avatarInput:focus+label,
+#avatarInput:hover+label {
+    box-shadow: 0px 0px 5px white;
+}
+
+.avatar-label {
+    display: block;
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+#profile-avatar:focus {
+    box-shadow: 0px 0px 5px white;
+
+}
+
+.avatar-label:hover,
+.avatar-label:focus {
+    box-shadow: 0px 0px 5px white;
+}
+
+#profile-avatar img {
+    border-radius: 50%;
+    object-fit: cover;
+    height: 100%;
+    width: 100%;
+}
+
+#profile-avatar img[src=""] {
+    display: none;
 }
 
 .users-ingredients form {

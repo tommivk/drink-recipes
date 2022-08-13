@@ -41,7 +41,7 @@ def add_user(username, password):
 
 
 def get_user_data(user_id):
-    return db.session.execute('''SELECT TO_CHAR(join_date, 'MM/YYYY') as join_date,
+    return db.session.execute('''SELECT avatar_id, TO_CHAR(join_date, 'MM/YYYY') as join_date,
                                       (SELECT COUNT(*) FROM Comments WHERE user_id=:user_id) as comment_count,
                                       (SELECT COUNT(*) FROM Drinks WHERE user_id=:user_id) as recipe_count
                                       FROM Users WHERE id=:user_id''', {
@@ -123,6 +123,17 @@ def remove_ingredient(ingredient_id):
         db.session.execute(
             "DELETE FROM UsersIngredients WHERE ingredient_id=:ingredient_id AND user_id=:user_id",
             {"ingredient_id": ingredient_id, "user_id": user_id})
+        db.session.commit()
+        return True
+    except:
+        return False
+
+
+def update_avatar(image_id):
+    try:
+        user_id = session["user_id"]
+        db.session.execute("UPDATE Users SET avatar_id=:image_id WHERE id=:user_id", {
+                           "image_id": image_id, "user_id": user_id})
         db.session.commit()
         return True
     except:

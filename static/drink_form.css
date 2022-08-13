@@ -16,7 +16,7 @@
     margin-bottom: 40px;
 }
 
-input[type="file"] {
+#imageInput {
     opacity: 0;
 }
 
@@ -44,11 +44,10 @@ input[type="file"] {
     align-items: center;
 }
 
-input[type="file"]:focus+label,
-input[type="file"]:hover+label {
+#imageInput:focus+label,
+#imageInput:hover+label {
     box-shadow: 0px 0px 5px white;
 }
-
 
 .drink-form {
     display: flex;

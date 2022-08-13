@@ -365,7 +365,38 @@ def profile_page(username):
         return abort(404)
 
     user_data = users.get_user_data(user_id)
+
     return render_template("user_profile.html", user_data=user_data, username=username)
+
+
+@app.route("/users/<string:username>/update", methods=["POST"])
+def update_profile(username):
+    is_logged_in()
+    check_csrf()
+    user = logged_user_name()
+
+    if username != user:
+        return abort(403)
+
+    file = request.files["picture"]
+
+    image_data = file.read()
+
+    if not file.filename.endswith(".jpg"):
+        return "Invalid filetype"
+
+    if len(image_data) > 200*1024:
+        return "Maximum filesize is 200kB"
+
+    image_id = images.add_image(image_data)
+
+    if not image_id:
+        return abort(500)
+
+    if users.update_avatar(image_id):
+        flash("Profile updated")
+
+    return redirect(request.referrer)
 
 
 @app.route("/users/<string:username>/ingredients", methods=["GET"])

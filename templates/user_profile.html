@@ -2,27 +2,101 @@
 {% block title %}{{username}}{% endblock %}
 {% block page_content %}
 
-<div class="profile-container">
-    <div class="profile-top">
-        <div class="profile-avatar"></div>
+<form action="/users/{{username}}/update" method="POST" enctype="multipart/form-data" onsubmit="return validate()">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    <div id="profile-container">
+        <div class="profile-top">
+            <div id="profile-avatar">
+                <label for="avatarInput" class="avatar-label">
+                    {% if user_data.avatar_id %}
+                    <img id="avatar-img" src="{{ url_for('serve_img', id=user_data.avatar_id)}}">
+                    {% else %}
+                    <img id="avatar-img" src="">
+                    {% endif %}
+                </label>
+                <input type="file" accept="image/*" name="picture" id="avatarInput" />
+                <div id="avatar-edit-icon" class="avatar-edit-icon hidden">
+                    <i class="fa-solid fa-pencil"></i>
+                </div>
+            </div>
+        </div>
+        <div class="profile-bottom">
+            <h1 class="title">{{username}}</h1>
+            <table>
+                <tr>
+                    <td>Member since:</td>
+                    <td>{{user_data.join_date}}</td>
+                </tr>
+                <tr>
+                    <td>Recipes uploaded:</td>
+                    <td>{{user_data.recipe_count}}</td>
+                </tr>
+                <tr>
+                    <td>Comments posted:</td>
+                    <td>{{user_data.comment_count}}</td>
+                </tr>
+            </table>
+            {% if username == session.username %}
+            <div id="profile-update-buttons" class="flex-align">
+                <button id="edit-profile-btn" type="button" class="btn" onclick="editProfile()">EDIT PROFILE</button>
+                <button id="profile-edit-cancel-btn" type="button" class="btn btn--grey hidden"
+                    onclick="cancel()">CANCEL</button>
+                <button id="profile-edit-submit-btn" class="btn hidden" type="submit">SAVE</button>
+            </div>
+            <p id="avatar-error" class="text-center error-text word-break hidden"></p>
+            {% endif %}
+        </div>
     </div>
-    <div class="profile-bottom">
-        <h1 class="title">{{username}}</h1>
-        <table>
-            <tr>
-                <td>Member since:</td>
-                <td>{{user_data.join_date}}</td>
-            </tr>
-            <tr>
-                <td>Recipes uploaded:</td>
-                <td>{{user_data.recipe_count}}</td>
-            </tr>
-            <tr>
-                <td>Comments posted:</td>
-                <td>{{user_data.comment_count}}</td>
-            </tr>
-        </table>
-    </div>
-</div>
+</form>
+<script>
+    let avatarContainer = document.getElementById("profile-avatar")
+    let avatar = document.getElementById("avatar-img")
+    let submitButton = document.getElementById("profile-edit-submit-btn")
+    let cancelButton = document.getElementById("profile-edit-cancel-btn")
+    let editProfileButton = document.getElementById("edit-profile-btn")
+    let avatarEditIcon = document.getElementById("avatar-edit-icon")
+    let avatarError = document.getElementById("avatar-error")
 
+    avatarInput.onchange = event => {
+        const [file] = avatarInput.files
+
+        if (file) {
+            avatarError.classList.add("hidden")
+
+            if (file.size > 200 * 1024) {
+                avatarError.classList.remove("hidden")
+                avatarError.innerText = "Maximum filesize is 200kB"
+                return
+            }
+            if (file.type != "image/jpeg") {
+                avatarError.classList.remove("hidden")
+                avatarError.innerText = "Image type must be jpeg"
+                return
+            }
+
+            avatar.src = URL.createObjectURL(file)
+            buttons.classList.remove("hidden")
+        }
+    }
+
+    function editProfile() {
+        editProfileButton.classList.add("hidden")
+        submitButton.classList.remove("hidden")
+        cancelButton.classList.remove("hidden")
+        avatarEditIcon.classList.remove("hidden")
+        avatarContainer.style.pointerEvents = "all"
+    }
+
+    function cancel() {
+        location.reload()
+    }
+
+    function validate() {
+        const [file] = avatarInput.files
+        if (!file) {
+            return false
+        }
+        return true
+    }
+</script>
 {% endblock %}
