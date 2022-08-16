@@ -94,7 +94,7 @@ def get_ingredients(id):
 
 def get_comments(id):
     return db.session.execute(
-        '''SELECT C.id, C.comment, TO_CHAR(C.timestamp, 'DD/MM/YYYY HH24:MI') as date, username,
+        '''SELECT C.id, C.comment, TO_CHAR(C.timestamp, 'DD/MM/YYYY HH24:MI') as date, U.username, U.avatar_id,
             COALESCE((SELECT stars FROM Ratings R WHERE R.drink_id=:drink_id AND R.user_id = U.id), 0) as rating
             FROM Comments C
             JOIN Users U ON U.id = C.user_id

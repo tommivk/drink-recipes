@@ -74,9 +74,16 @@
                     <div class="comment">
                         <div class="flex-align">
                             <a href="/users/{{comment.username}}">
-                                <h3 class="comment-username">
-                                    {{comment.username}}
-                                </h3>
+                                <div class="flex-align">
+                                    {% if comment.avatar_id %}
+                                    <img class="comment-avatar" src="{{ url_for('serve_img', id=comment.avatar_id)}}">
+                                    {% else %}
+                                    <div class="comment-avatar"><i class="fa-solid fa-user"></i></div>
+                                    {% endif %}
+                                    <h3 class="comment-username">
+                                        {{comment.username}}
+                                    </h3>
+                                </div>
                             </a>
                             <div class="comment-date">
                                 {{comment.date}}

@@ -36,7 +36,6 @@
     pointer-events: none;
 }
 
-
 .drink-top-section {
     display: flex;
     justify-content: space-between;
@@ -86,6 +85,7 @@
 
 .comment a {
     color: black;
+    text-decoration: none;
 }
 
 .comment-username {
@@ -116,4 +116,21 @@
     color: gray;
     margin-left: auto;
     margin-right: 10px;
+}
+
+.comment-avatar {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    margin: 10px 10px 10px 0px;
+    box-shadow: 0px 0px 2px rgb(116, 121, 121);
+    background: whitesmoke;
+    object-fit: cover;
+    display: grid;
+    place-items: center;
+}
+
+.comment-avatar i {
+    font-size: 20px;
+    color: var(--drk-gray);
 }
