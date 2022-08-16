@@ -75,13 +75,12 @@
             }
 
             avatar.src = URL.createObjectURL(file)
-            buttons.classList.remove("hidden")
+            submitButton.classList.remove("hidden")
         }
     }
 
     function editProfile() {
         editProfileButton.classList.add("hidden")
-        submitButton.classList.remove("hidden")
         cancelButton.classList.remove("hidden")
         avatarEditIcon.classList.remove("hidden")
         avatarContainer.style.pointerEvents = "all"
