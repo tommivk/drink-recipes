@@ -277,6 +277,7 @@ body {
 .error-text {
     color: #d91f1f;
     margin-bottom: 0px;
+    font-size: 0.9em;
 }
 
 .hidden {
