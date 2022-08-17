@@ -132,8 +132,15 @@ def remove_ingredient(ingredient_id):
 def update_avatar(image_id):
     try:
         user_id = session["user_id"]
+        previous_avatar = db.session.execute(
+            "SELECT avatar_id FROM Users WHERE id=:user_id", {"user_id": user_id}).fetchone()
+
         db.session.execute("UPDATE Users SET avatar_id=:image_id WHERE id=:user_id", {
                            "image_id": image_id, "user_id": user_id})
+
+        if previous_avatar:
+            db.session.execute("DELETE FROM Images WHERE id=:previous_id", {
+                               "previous_id": previous_avatar[0]})
         db.session.commit()
         return True
     except:
