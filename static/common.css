@@ -343,6 +343,10 @@ body {
     user-select: none;
 }
 
+#nav__new-recipe-link {
+    display: none;
+}
+
 .nav ul {
     margin: 0px;
     list-style: none;
@@ -357,7 +361,7 @@ body {
     margin-right: 30px;
 }
 
-.nav li:nth-child(1) {
+.nav li:nth-child(2) {
     margin-left: auto;
 }
 
@@ -401,6 +405,14 @@ body {
 }
 
 @media (max-width: 800px) {
+    .nav li:nth-child(2) {
+        margin-left: 0;
+    }
+
+    #nav__new-recipe-link {
+        display: block;
+    }
+
     .add-recipe-button {
         display: none;
     }

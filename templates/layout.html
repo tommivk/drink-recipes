@@ -25,6 +25,7 @@
             </div>
             <ul id="nav-list">
                 {% if session.username %}
+                <li id="nav__new-recipe-link"><a href="/drinks/add">Add Recipe</a></li>
                 <li><a href="/drinks">Drinks</a></li>
                 {% if session.admin %}
                 <li><a href="/admin">Admin</a></li>
