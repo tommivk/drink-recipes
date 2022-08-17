@@ -401,6 +401,10 @@ body {
 }
 
 @media (max-width: 800px) {
+    .add-recipe-button {
+        display: none;
+    }
+
     .nav-toggle {
         display: block;
     }
