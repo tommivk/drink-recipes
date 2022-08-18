@@ -20,13 +20,14 @@ CREATE TABLE DrinkCategories(
 
 CREATE TABLE Drinks (
     id SERIAL PRIMARY KEY,
-    user_id integer References Users,
+    user_id INTEGER References Users,
     name TEXT,
     description TEXT,
     recipe TEXT,
     image_id INTEGER References Images,
     category_id INTEGER References DrinkCategories,
-    timestamp TIMESTAMP
+    timestamp TIMESTAMP,
+    views INTEGER DEFAULT 0,
 );
 
 CREATE TABLE FavouriteDrinks (

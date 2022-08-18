@@ -214,3 +214,13 @@ def delete_drink(id):
         return True
     except:
         return False
+
+
+def add_view(id):
+    try:
+        db.session.execute(
+            "UPDATE Drinks SET views = views + 1 WHERE id=:id", {"id": id})
+        db.session.commit()
+        return True
+    except:
+        return False

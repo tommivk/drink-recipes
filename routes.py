@@ -227,6 +227,8 @@ def serve_drink(id):
     if not drink:
         return abort(404)
 
+    drinks.add_view(id)
+
     ingredients = drinks.get_ingredients(id)
     comments = drinks.get_comments(id)
 
