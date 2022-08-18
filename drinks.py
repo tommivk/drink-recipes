@@ -22,6 +22,14 @@ def newest():
            ORDER BY timestamp DESC LIMIT 4''').fetchall()
 
 
+def most_viewed():
+    return db.session.execute('''SELECT D.id, D.name, D.views, D.description, D.image_id, CAST(SUM(R.stars) as float) / COUNT(R.stars) as rating
+           FROM Drinks D
+           LEFT JOIN Ratings R ON D.id=R.drink_id
+           GROUP BY D.id
+           ORDER BY D.views DESC LIMIT 5''').fetchall()
+
+
 def filtered(search):
     user_id = session["user_id"]
     return db.session.execute(

@@ -32,6 +32,12 @@
             <li><a href="/drinks/{{drink.id}}">{{drink.name}}</a></li>
             {% endfor %}
         </ol>
+        <h1 class="title">Most viewed</h1>
+        <ol>
+            {% for drink in most_viewed %}
+            <li><a href="/drinks/{{drink.id}}">{{drink.name}}</a></li>
+            {% endfor %}
+        </ol>
     </div>
 
     <div class="newest-drinks">

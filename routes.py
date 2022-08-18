@@ -18,8 +18,9 @@ def index():
 
     best = drinks.best()
     newest = drinks.newest()
+    most_viewed = drinks.most_viewed()
 
-    return render_template("index.html", best=best, newest=newest)
+    return render_template("index.html", best=best, newest=newest, most_viewed=most_viewed)
 
 
 @app.route("/signup", methods=["GET"])
