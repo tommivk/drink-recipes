@@ -145,3 +145,22 @@ def update_avatar(image_id):
         return True
     except:
         return False
+
+
+def delete_avatar():
+    try:
+        user_id = session["user_id"]
+        avatar_id = db.session.execute(
+            "SELECT avatar_id FROM Users WHERE id=:user_id", {"user_id": user_id}).fetchone()
+        if not avatar_id:
+            return False
+
+        db.session.execute("UPDATE Users SET avatar_id=NULL WHERE id=:user_id", {
+                           "user_id": user_id})
+        db.session.execute("DELETE FROM Images WHERE id=:avatar_id", {
+                           "avatar_id": avatar_id[0]})
+
+        db.session.commit()
+        return True
+    except:
+        return False

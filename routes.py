@@ -453,6 +453,22 @@ def user_favourited(username):
     return render_template("user_favourited.html", username=username, favourited_drinks=favourited_drinks)
 
 
+@app.route("/users/<string:username>/avatar/delete", methods=["POST"])
+def delete_avatar(username):
+    is_logged_in()
+    check_csrf()
+
+    if not users.is_logged_user(username):
+        return abort(403)
+
+    if users.delete_avatar():
+        flash("Avatar deleted")
+    else:
+        return abort(500)
+
+    return redirect(request.referrer)
+
+
 @app.route("/users/<string:username>/ingredients/delete", methods=["POST"])
 def delete_favourite_ingredient(username):
     is_logged_in()

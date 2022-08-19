@@ -2,9 +2,15 @@
 {% block title %}{{username}}{% endblock %}
 {% block page_content %}
 
-<form action="/users/{{username}}/update" method="POST" enctype="multipart/form-data" onsubmit="return validate()">
-    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-    <div id="profile-container">
+<div id="profile-container">
+    <form action="/users/{{username}}/avatar/delete" method="POST" onsubmit="return confirm('Delete avatar?')">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <button id="avatar-delete-btn" class="hidden" type="submit">DELETE AVATAR</button>
+    </form>
+    <form id="profileUpdateForm" action="/users/{{username}}/update" method="POST" enctype="multipart/form-data"
+        onsubmit="return validate()">
+
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <div class="profile-top">
             <div id="profile-avatar">
                 <label for="avatarInput" class="avatar-label">
@@ -19,6 +25,7 @@
                     <i class="fa-solid fa-pencil"></i>
                 </div>
             </div>
+
         </div>
         <div class="profile-bottom">
             <h1 class="title">{{username}}</h1>
@@ -46,8 +53,10 @@
             <p id="avatar-error" class="text-center error-text word-break hidden"></p>
             {% endif %}
         </div>
-    </div>
-</form>
+    </form>
+</div>
+
+
 <script>
     let avatarContainer = document.getElementById("profile-avatar")
     let avatar = document.getElementById("avatar-img")
@@ -56,6 +65,7 @@
     let editProfileButton = document.getElementById("edit-profile-btn")
     let avatarEditIcon = document.getElementById("avatar-edit-icon")
     let avatarError = document.getElementById("avatar-error")
+    let avatarDeleteButton = document.getElementById("avatar-delete-btn")
 
     avatarInput.onchange = event => {
         const [file] = avatarInput.files
@@ -80,9 +90,14 @@
     }
 
     function editProfile() {
+        let avatarExists = "{{user_data.avatar_id}}" !== "None"
+        if (avatarExists) {
+            avatarDeleteButton.classList.remove("hidden")
+        }
         editProfileButton.classList.add("hidden")
         cancelButton.classList.remove("hidden")
         avatarEditIcon.classList.remove("hidden")
+
         avatarContainer.style.pointerEvents = "all"
     }
 
