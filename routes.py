@@ -241,9 +241,9 @@ def delete_drink(id):
     is_logged_in()
     check_csrf()
 
-    is_author = drinks.is_author(id)
+    allow = (drinks.is_author(id) or is_admin())
 
-    if is_author:
+    if allow:
         if drinks.delete_drink(id):
             flash("Drink successfully deleted")
         else:
