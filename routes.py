@@ -458,10 +458,10 @@ def delete_avatar(username):
     is_logged_in()
     check_csrf()
 
-    if not users.is_logged_user(username):
+    if not (users.is_logged_user(username) or is_admin()):
         return abort(403)
 
-    if users.delete_avatar():
+    if users.delete_avatar(username):
         flash("Avatar deleted")
     else:
         return abort(500)

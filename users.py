@@ -147,9 +147,9 @@ def update_avatar(image_id):
         return False
 
 
-def delete_avatar():
+def delete_avatar(username):
     try:
-        user_id = session["user_id"]
+        user_id = get_user_id(username)
         avatar_id = db.session.execute(
             "SELECT avatar_id FROM Users WHERE id=:user_id", {"user_id": user_id}).fetchone()
         if not avatar_id:
