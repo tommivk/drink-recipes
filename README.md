@@ -30,13 +30,17 @@ You can sign up to create a new user account or login with the following credent
 - User can browse drinks that can be made using the ingredients that the user has added to their ingredient list (done)
 - User can delete drink recipes that they uploaded (done)
 - User can delete comments that they added (done)
+- User can add a profile picture (done)
+- User can change their profile picture (done)
+- User can delete their profile picture (done)
 - User can delete their own account  
 
 ### Admin features
 
 - Admin can add new ingredients (done)
 - Admin can add new drink categories (done)
-- Admin can delete ingredients
-- Admin can delete drink recipes
+- Admin can delete drink recipes (done)
+- Admin can delete comments (done)
+- Admin can delete profile pictures (done)
 - Admin can delete users
-- Admin can delete comments
+- Admin can delete ingredients
