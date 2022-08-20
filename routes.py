@@ -278,7 +278,7 @@ def delete_comment(drink_id):
 
     comment_id = request.form["comment_id"]
 
-    if not drinks.is_comment_author(comment_id):
+    if not (drinks.is_comment_author(comment_id) or is_admin()):
         return abort(403)
 
     if drinks.delete_comment(comment_id):
