@@ -9,8 +9,8 @@ import users
 import ratings
 import ingredients
 import images
-import util
 from werkzeug.exceptions import HTTPException
+from util import is_admin, is_logged_in, logged_user_name, check_csrf, valid_units
 
 
 @app.errorhandler(HTTPException)
@@ -202,7 +202,7 @@ def drinks_post():
         if measure and float(measure) < 0:
             return "Measure cannot be negative"
 
-        if unit and unit not in util.valid_units:
+        if unit and unit not in valid_units:
             return "Invalid unit"
 
         if int(ingredient_id) not in ingredient_ids:
@@ -222,7 +222,7 @@ def new_drink_form():
     is_logged_in()
     all_ingredients = ingredients.get_all()
     categories = drinks.get_categories()
-    units = util.valid_units
+    units = valid_units
     return render_template("drink_form.html", ingredients=all_ingredients, categories=categories, units=units)
 
 
@@ -510,33 +510,3 @@ def delete_favourite_ingredient(username):
 def admin_panel():
     is_admin()
     return render_template("admin.html")
-
-
-def check_csrf():
-    if session["csrf_token"] != request.form["csrf_token"]:
-        return abort(403)
-
-
-def is_logged_in():
-    if "username" not in session or "user_id" not in session:
-        return abort(401)
-    return True
-
-
-def logged_user_id():
-    if "user_id" not in session:
-        abort(401)
-    return session["user_id"]
-
-
-def logged_user_name():
-    if "username" not in session:
-        abort(401)
-    return session["username"]
-
-
-def is_admin():
-    if "admin" in session:
-        if session["admin"] == True:
-            return True
-    return abort(403)
