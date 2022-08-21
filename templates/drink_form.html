@@ -38,13 +38,9 @@
                 <input class="measure-input" type="number" id="measure" autocomplete="off">
                 <select class="form-select" type="text" id=unit>
                     <option selected value=""></option>
-                    <option value="cl">cl</option>
-                    <option value="ml">ml</option>
-                    <option value="litres">litres</option>
-                    <option value="pcs.">pcs.</option>
-                    <option value="dashes">dashes</option>
-                    <option value="tsp.">tsp.</option>
-                    <option value="tbsp.">tbsp.</option>
+                    {% for unit in units %}
+                    <option value="{{unit}}">{{unit}}</option>
+                    {% endfor %}
                 </select>
                 <select class="form-select" id="ingredientSelect">
                     {% for ingredient in ingredients %}

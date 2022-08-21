@@ -9,6 +9,7 @@ import users
 import ratings
 import ingredients
 import images
+import util
 
 
 @app.route("/", methods=["GET"])
@@ -202,7 +203,8 @@ def new_drink_form():
     is_logged_in()
     all_ingredients = ingredients.get_all()
     categories = drinks.get_categories()
-    return render_template("drink_form.html", ingredients=all_ingredients, categories=categories)
+    units = util.valid_units
+    return render_template("drink_form.html", ingredients=all_ingredients, categories=categories, units=units)
 
 
 @app.route("/drinks/categories", methods=["POST"])
