@@ -26,13 +26,13 @@
         </div>
     </a>
     <div class="top-5">
-        <h1 class="title">Top 5 recipes</h1>
+        <h2 class="title">Top 5 recipes</h2>
         <ol>
             {% for drink in best %}
             <li><a href="/drinks/{{drink.id}}">{{drink.name}}</a></li>
             {% endfor %}
         </ol>
-        <h1 class="title">Most viewed</h1>
+        <h2 class="title">Most viewed</h2>
         <ol>
             {% for drink in most_viewed %}
             <li><a href="/drinks/{{drink.id}}">{{drink.name}}</a></li>

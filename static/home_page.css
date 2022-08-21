@@ -17,6 +17,7 @@
 .featured-link {
     grid-area: featured;
     text-decoration: none;
+    max-height: 400px;
 }
 
 .featured {
@@ -32,10 +33,14 @@
     background: var(--drk-gray);
     border-radius: 10px;
     height: 100%;
-    padding: 20px;
+    padding: 10px 20px 30px 20px;
     box-sizing: border-box;
     color: white;
     width: 100%;
+}
+
+.top-5 h2 {
+    font-size: 25px;
 }
 
 .newest-drinks {
@@ -47,6 +52,7 @@
     box-sizing: border-box;
     border-radius: 10px;
     height: fit-content;
+    padding-bottom: 20px;
 }
 
 .newest-drinks-cards {

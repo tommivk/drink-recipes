@@ -127,6 +127,10 @@
     box-sizing: border-box;
 }
 
+.ingredient-select {
+    margin-right: 10px;
+}
+
 .ingredient-delete-btn {
     background: none;
     padding: 0px;

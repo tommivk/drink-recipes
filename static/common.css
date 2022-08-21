@@ -7,6 +7,7 @@
     --rating-box-width: 160px;
     --rating-box-width-sm: 80px;
     --drk-gray: rgb(30 30 32);
+    --drk-gray-hover: rgb(77, 74, 74);
     --light-gray: rgb(131, 124, 124);
     --navbar-height: 50px;
     --green-gradient: linear-gradient(52deg, rgba(33, 160, 171, 1) 0%, rgba(3, 242, 169, 1) 100%);
@@ -39,6 +40,12 @@ body {
     color: white;
     margin: auto;
     background: rgba(33, 160, 171, 1);
+}
+
+.btn--small {
+    height: fit-content;
+    width: fit-content;
+    padding: 5px 10px;
 }
 
 .btn:hover {

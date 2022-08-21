@@ -17,6 +17,19 @@
     color: white;
     cursor: pointer;
     margin-right: 10px;
+    position: relative;
+    overflow: hidden;
+}
+
+.drink-favourite-icon.remove-favourite::after {
+    position: absolute;
+    content: "\\";
+    color: var(--drk-gray);
+    font-weight: 600;
+    font-size: 40px;
+    left: 0px;
+    top: -12px;
+    transform: rotate(-35deg);
 }
 
 .fav-drink-btn {
@@ -31,6 +44,10 @@
     cursor: pointer;
 }
 
+.fav-drink-btn:hover {
+    background: var(--drk-gray-hover);
+}
+
 .fav-drink-btn:disabled {
     opacity: 0.2;
     pointer-events: none;
@@ -41,6 +58,10 @@
     justify-content: space-between;
     align-items: center;
     padding: 0px 5px;
+}
+
+.drink-author-link {
+    color: rgb(40, 98, 119);
 }
 
 .rating-count {
@@ -112,6 +133,10 @@
     cursor: pointer;
 }
 
+.comment-delete-icon:hover {
+    color: var(--drk-gray-hover);
+}
+
 .comment-date {
     color: gray;
     margin-left: auto;
@@ -133,4 +158,39 @@
 .comment-avatar i {
     font-size: 20px;
     color: var(--drk-gray);
+}
+
+.comment-input {
+    width: 400px;
+    max-width: 90vw;
+    margin-bottom: 40px;
+}
+
+.comment-input input {
+    padding: 10px 30px;
+    width: 100%;
+    border: none;
+    background: whitesmoke;
+    border-radius: 7px 0px 0px 7px;
+    border-bottom: 2px solid transparent;
+}
+
+.comment-input button {
+    height: 37px;
+    width: 60px;
+    padding: 0px;
+    border-radius: 0px 7px 7px 0px;
+    border: 2px solid transparent;
+    background: var(--drk-gray);
+    color: white;
+    cursor: pointer;
+}
+
+.comment-input button:hover {
+    background: var(--drk-gray-hover)
+}
+
+.comment-input input:focus,
+.comment-input input:focus+button {
+    outline: 2px solid gray;
 }

@@ -7,7 +7,9 @@
         <h1 class="title word-break">{{drink.name}}</h1>
         <p class="text-center word-break">{{drink.description}}</p>
         <div class="drink-top-section">
-            <p>Author: <a href="/users/{{drink.author}}">{{drink.author}}</a></p>
+            <p>
+                Author: <a class="drink-author-link" href="/users/{{drink.author}}">{{drink.author}}</a>
+            </p>
             <div class="flex-align">
                 <i class="fa-solid fa-martini-glass category-icon"></i>
                 <p>{{drink.category}}</p>
@@ -33,7 +35,7 @@
             <form action="/drinks/{{drink.id}}/favourite/delete" method="post">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                 <button class="fav-drink-btn" type="submit">
-                    <i class="fa-solid fa-bookmark drink-favourite-icon"></i> Remove from favourites
+                    <i class="fa-solid fa-bookmark drink-favourite-icon remove-favourite"></i> Remove from favourites
                 </button>
             </form>
             {% else %}
@@ -59,13 +61,15 @@
         <h2>Comments</h2>
         <form action="/drinks/{{drink.id}}/comment" method="post">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-            <input required type="text" name="comment"> <button type="submit">Add comment</button>
+            <div class="flex-align comment-input">
+                <input required type="text" name="comment" placeholder="Add comment..." autocomplete="off"> <button
+                    type="submit">Add</button>
+            </div>
         </form>
 
         {% if comments|length == 0%}
         <p>No comments added yet</p>
-        {% endif %}
-
+        {% else %}
         <form action="/drinks/{{drink.id}}/comment/delete" method="post" onsubmit="return handleCommentDelete()">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
             <ul class="comment-list">
@@ -109,6 +113,7 @@
                 {% endfor%}
             </ul>
         </form>
+        {% endif %}
     </div>
 </div>
 
