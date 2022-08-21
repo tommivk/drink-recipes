@@ -184,7 +184,20 @@ def drinks_post():
         measure = ingredient['measure']
         unit = ingredient['unit']
 
-        # TODO validate measure and unit
+        if unit and not measure:
+            return "Measure cannot be empty if unit is selected"
+
+        if measure and not unit:
+            return "Unit cannot be empty id measure is selected"
+
+        if measure and not (measure.replace(".", "", 1).isdigit()):
+            return "Invalid measure"
+
+        if measure and float(measure) < 0:
+            return "Measure cannot be negative"
+
+        if unit and unit not in util.valid_units:
+            return "Invalid unit"
 
         if int(ingredient_id) not in ingredient_ids:
             return "invalid ingredient id"
