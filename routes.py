@@ -10,6 +10,12 @@ import ratings
 import ingredients
 import images
 import util
+from werkzeug.exceptions import HTTPException
+
+
+@app.errorhandler(HTTPException)
+def http_error(e):
+    return render_template("error.html", error_code=e.code, error_msg=e.description)
 
 
 @app.route("/", methods=["GET"])
@@ -504,10 +510,6 @@ def delete_favourite_ingredient(username):
 def admin_panel():
     is_admin()
     return render_template("admin.html")
-
-# @app.errorhandler(401)
-# def not_logged_in(e):
-#     return redirect("/login")
 
 
 def check_csrf():

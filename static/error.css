@@ -1,0 +1,23 @@
+.error-container {
+    width: 100vw;
+    height: calc(100vh - var(--navbar-height));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.error-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.error-container h1 {
+    font-size: 10em;
+    margin: 0px;
+}
+
+.error-content p {
+    max-width: 550px;
+    padding: 0px 20px
+}
