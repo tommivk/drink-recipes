@@ -68,7 +68,7 @@
         </form>
 
         {% if comments|length == 0%}
-        <p>No comments added yet</p>
+        <p class="no-comments-msg">No comments added yet</p>
         {% else %}
         <form action="/drinks/{{drink.id}}/comment/delete" method="post" onsubmit="return handleCommentDelete()">
             <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">

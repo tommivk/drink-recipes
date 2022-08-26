@@ -194,3 +194,7 @@
 .comment-input input:focus+button {
     outline: 2px solid gray;
 }
+
+.no-comments-msg {
+    margin-bottom: 50px;
+}
