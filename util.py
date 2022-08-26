@@ -8,10 +8,9 @@ def check_csrf():
         return abort(403)
 
 
-def is_logged_in():
+def check_login():
     if "username" not in session or "user_id" not in session:
         return abort(401)
-    return True
 
 
 def logged_user_name():

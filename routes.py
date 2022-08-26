@@ -10,18 +10,19 @@ import ratings
 import ingredients
 import images
 from werkzeug.exceptions import HTTPException
-from util import is_admin, is_logged_in, logged_user_name, check_csrf, valid_units
+from util import is_admin, logged_user_name, check_csrf, valid_units, check_login
 
 
 @app.errorhandler(HTTPException)
 def http_error(e):
+    if e.code == 401:
+        return redirect("/login")
     return render_template("error.html", error_code=e.code, error_msg=e.description)
 
 
 @app.route("/", methods=["GET"])
 def index():
-    if "username" not in session:
-        return redirect("/login")
+    check_login()
 
     best = drinks.best()
     newest = drinks.newest()
@@ -101,7 +102,7 @@ def logout():
 
 @app.route("/ingredients", methods=["GET"])
 def ingredients_get():
-    is_logged_in()
+    check_login()
     ingredient_names = ingredients.get_names()
     return render_template("ingredients.html", ingredients=ingredient_names)
 
@@ -122,7 +123,7 @@ def indgredients_post():
 
 @app.route("/drinks", methods=["GET"])
 def drinks_get():
-    is_logged_in()
+    check_login()
 
     filter_set = request.args.get("filter", None)
     search = request.args.get("search", "")
@@ -137,7 +138,7 @@ def drinks_get():
 
 @app.route("/drinks", methods=["POST"])
 def drinks_post():
-    is_logged_in()
+    check_login()
     check_csrf()
 
     name = request.form["name"]
@@ -219,7 +220,7 @@ def drinks_post():
 
 @app.route("/drinks/add", methods=["GET"])
 def new_drink_form():
-    is_logged_in()
+    check_login()
     all_ingredients = ingredients.get_all()
     categories = drinks.get_categories()
     units = valid_units
@@ -240,9 +241,9 @@ def add_drink_category():
     return abort(500)
 
 
-@app.route("/drinks/<int:id>")
+@app.route("/drinks/<int:id>", methods=["GET"])
 def serve_drink(id):
-    is_logged_in()
+    check_login()
 
     drink = drinks.get_by_id(id)
 
@@ -259,7 +260,7 @@ def serve_drink(id):
 
 @app.route("/drinks/<int:id>/delete", methods=["POST"])
 def delete_drink(id):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     allow = (drinks.is_author(id) or is_admin())
@@ -278,7 +279,7 @@ def delete_drink(id):
 
 @app.route("/drinks/<int:id>/comment", methods=["POST"])
 def add_comment(id):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     comment = request.form["comment"].strip()
@@ -294,7 +295,7 @@ def add_comment(id):
 
 @app.route("/drinks/<int:drink_id>/comment/delete", methods=["POST"])
 def delete_comment(drink_id):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     comment_id = request.form["comment_id"]
@@ -312,7 +313,7 @@ def delete_comment(drink_id):
 
 @app.route("/drinks/<int:id>/rate", methods=["POST"])
 def add_review(id):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     stars = int(request.form["stars"])
@@ -338,7 +339,7 @@ def add_review(id):
 
 @app.route("/drinks/<int:id>/favourite", methods=["POST"])
 def favourite_drink(id):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     is_favourited = drinks.is_favourited(id)
@@ -355,7 +356,7 @@ def favourite_drink(id):
 
 @app.route("/drinks/<int:id>/favourite/delete", methods=["POST"])
 def favourite_drink_delete(id):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     is_favourited = drinks.is_favourited(id)
@@ -383,7 +384,7 @@ def serve_img(id):
 
 @app.route("/users/<string:username>")
 def profile_page(username):
-    is_logged_in()
+    check_login()
     user_id = users.get_user_id(username)
     if not user_id:
         return abort(404)
@@ -395,7 +396,7 @@ def profile_page(username):
 
 @app.route("/users/<string:username>/update", methods=["POST"])
 def update_profile(username):
-    is_logged_in()
+    check_login()
     check_csrf()
     user = logged_user_name()
 
@@ -425,7 +426,7 @@ def update_profile(username):
 
 @app.route("/users/<string:username>/ingredients", methods=["GET"])
 def user_ingredients(username):
-    is_logged_in()
+    check_login()
     user = logged_user_name()
 
     if username != user:
@@ -439,7 +440,7 @@ def user_ingredients(username):
 
 @app.route("/users/<string:username>/ingredients", methods=["POST"])
 def favourite_ingredient(username):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     if not users.is_logged_user(username):
@@ -455,7 +456,7 @@ def favourite_ingredient(username):
 
 @app.route("/users/<string:username>/uploaded", methods=["GET"])
 def user_uploaded(username):
-    is_logged_in()
+    check_login()
 
     uploaded_drinks = users.uploaded_drinks(username)
 
@@ -464,7 +465,7 @@ def user_uploaded(username):
 
 @app.route("/users/<string:username>/favourited", methods=["GET"])
 def user_favourited(username):
-    is_logged_in()
+    check_login()
 
     if not users.is_logged_user(username):
         return abort(403)
@@ -476,7 +477,7 @@ def user_favourited(username):
 
 @app.route("/users/<string:username>/avatar/delete", methods=["POST"])
 def delete_avatar(username):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     if not (users.is_logged_user(username) or is_admin()):
@@ -492,7 +493,7 @@ def delete_avatar(username):
 
 @app.route("/users/<string:username>/ingredients/delete", methods=["POST"])
 def delete_favourite_ingredient(username):
-    is_logged_in()
+    check_login()
     check_csrf()
 
     if not users.is_logged_user(username):
