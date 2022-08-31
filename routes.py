@@ -116,7 +116,7 @@ def indgredients_post():
     type = request.form["type"]
 
     if ingredients.add_ingredient(name, type):
-        flash("Ingredient added")
+        flash(f"New ingredient \"{name}\" added!")
 
     return redirect(request.referrer)
 
@@ -237,6 +237,7 @@ def add_drink_category():
     description = request.form["description"]
 
     if drinks.add_category(name, description):
+        flash(f"New category \"{name}\" added!")
         return redirect("/drinks")
 
     return abort(500)
