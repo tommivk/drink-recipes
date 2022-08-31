@@ -1,6 +1,6 @@
 from flask import session, request, abort
 
-valid_units = ["cl", "ml", "tsp.", "tbsp.", "litres", "dashes", "pcs."]
+VALID_UNITS = ["cl", "ml", "tsp.", "tbsp.", "litres", "dashes", "pcs."]
 
 
 def check_csrf():

@@ -10,7 +10,7 @@ import ratings
 import ingredients
 import images
 from werkzeug.exceptions import HTTPException
-from util import is_admin, logged_user_name, check_csrf, valid_units, check_login
+from util import is_admin, logged_user_name, check_csrf, VALID_UNITS, check_login
 
 
 @app.errorhandler(HTTPException)
@@ -204,7 +204,7 @@ def drinks_post():
         if measure and float(measure) < 0:
             return "Measure cannot be negative"
 
-        if unit and unit not in valid_units:
+        if unit and unit not in VALID_UNITS:
             return "Invalid unit"
 
         if int(ingredient_id) not in ingredient_ids:
@@ -224,7 +224,7 @@ def new_drink_form():
     check_login()
     all_ingredients = ingredients.get_all()
     categories = drinks.get_categories()
-    units = valid_units
+    units = VALID_UNITS
     return render_template("drink_form.html", ingredients=all_ingredients, categories=categories, units=units)
 
 
