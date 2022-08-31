@@ -71,6 +71,10 @@ def get_categories():
         "SELECT id, name FROM DrinkCategories").fetchall()
 
 
+def category_exists(name):
+    return db.session.execute("SELECT 1 FROM DrinkCategories WHERE LOWER(name)=:name", {"name": name.lower()}).fetchone()
+
+
 def get_category_ids():
     return db.session.execute("SELECT id FROM DrinkCategories").fetchall()
 

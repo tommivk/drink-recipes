@@ -236,6 +236,10 @@ def add_drink_category():
     name = request.form["name"]
     description = request.form["description"]
 
+    if drinks.category_exists(name):
+        flash("Category already exists", "error")
+        return redirect(request.referrer)
+
     if drinks.add_category(name, description):
         flash(f"New category \"{name}\" added!")
         return redirect(request.referrer)
