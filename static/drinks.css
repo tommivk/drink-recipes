@@ -45,6 +45,15 @@
     color: aqua;
 }
 
+.ingredients-link {
+    color: rgb(57 100 199);
+    text-decoration: none;
+}
+
+.ingredients-link:hover {
+    text-decoration: underline;
+}
+
 .add-recipe-button {
     position: absolute;
     top: 20px;

@@ -14,7 +14,12 @@
                 <button type="submit"><span><i class="fa-solid fa-magnifying-glass"></i></span></button>
             </div>
             <div class="flex-align filter-checkbox">
-                <label>Show only drinks that can be made by using ingredients on your list</label>
+                <label>
+                    Show only drinks that can be made by using
+                    <a class="ingredients-link" href="/users/{{session.username}}/ingredients">
+                        ingredients on your list
+                    </a>
+                </label>
                 <input name="filter" type="checkbox" {% if request.args.get('filter')=='on' %} checked {% endif %}
                     onchange="handleFilterChange()">
             </div>
