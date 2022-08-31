@@ -50,7 +50,7 @@ def search(search):
     return db.session.execute('''SELECT id, name, description, image_id,
                                     COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars)
                                     FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
-                                    FROM drinks D WHERE LOWER(name) LIKE :search
+                                    FROM Drinks D WHERE LOWER(name) LIKE :search
                                     ORDER BY timestamp DESC''',
                               {"search": f"%{search.lower()}%"}).fetchall()
 
@@ -87,7 +87,7 @@ def get_by_id(id):
                     COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating,
                     (SELECT Count(*) as rating_count FROM Ratings R WHERE R.drink_id = D.id),
                     (SELECT (Count(*) > 0) FROM FavouriteDrinks WHERE user_id=:user_id AND drink_id=:drink_id) as is_favourited
-                    FROM drinks D
+                    FROM Drinks D
                     JOIN Users U ON U.id = D.user_id
                     JOIN DrinkCategories DC ON DC.id = D.category_id
                     WHERE D.id=:drink_id

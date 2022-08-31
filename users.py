@@ -69,7 +69,7 @@ def favourited_drinks(username):
         '''SELECT D.id as id, D.description as description, D.name as name, D.image_id as image_id,
                 COALESCE((SELECT cast(SUM(R.stars) as float) / COUNT(R.stars) FROM Ratings R WHERE R.drink_id = D.id), 0) as rating
                 FROM FavouriteDrinks F
-                JOIN drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
+                JOIN Drinks D ON F.drink_id = D.id WHERE F.user_id = (SELECT id FROM users WHERE username=:username)
             ''', {"username": username}).fetchall()
 
 

@@ -12,4 +12,4 @@ def add_image(image_data):
 
 
 def get_image(id):
-    return db.session.execute("SELECT data FROM images WHERE id=:id", {"id": id}).fetchone()
+    return db.session.execute("SELECT data FROM Images WHERE id=:id", {"id": id}).fetchone()
