@@ -19,9 +19,8 @@ You can sign up to create a new user account or login with the following credent
 - User can login and logout 
 - User can add a new drink recipe 
 - User can view the list of uploaded drink recipes
-- User can sort the list of drink recipes by rating/amount of views/date
 - User can open an individual drink recipe page 
-- User can leave a review (stars) for a recipe 
+- User can leave a rating (stars) for a recipe 
 - User can leave a comment for a recipe 
 - User can add drink recipe to favourites 
 - User can view their own profile page and browse the list of their favourite drinks 
@@ -30,6 +29,7 @@ You can sign up to create a new user account or login with the following credent
 - User can browse drinks that can be made using the ingredients that the user has added to their ingredient list 
 - User can delete drink recipes that they uploaded 
 - User can delete comments that they added 
+- User can visit other users profiles and view their uploaded recipes
 - User can add a profile picture 
 - User can change their profile picture 
 - User can delete their profile picture
