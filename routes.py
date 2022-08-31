@@ -172,9 +172,7 @@ def drinks_post():
     if len(image_data) > 200*1024:
         return "Maximum filesize is 200kB"
 
-    result = drinks.get_category_ids()
-    category_ids = [r[0] for r in result]
-    if int(category_id) not in category_ids:
+    if not drinks.get_category_by_id(int(category_id)):
         return "Invalid category id"
 
     image_id = images.add_image(image_data)
@@ -185,9 +183,6 @@ def drinks_post():
         name, description, recipe, image_id, category_id)
     if not drink_id:
         return abort(500)
-
-    result = ingredients.get_ids()
-    ingredient_ids = [r[0] for r in result]
 
     ingredients_list = json.loads(urllib.parse.unquote(ingredients_data))
 
@@ -211,7 +206,7 @@ def drinks_post():
         if unit and unit not in VALID_UNITS:
             return "Invalid unit"
 
-        if int(ingredient_id) not in ingredient_ids:
+        if not ingredients.get_by_id(int(ingredient_id)):
             return "invalid ingredient id"
 
         if not drinks.add_drink_ingredient(drink_id, ingredient_id, measure, unit):

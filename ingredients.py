@@ -27,3 +27,8 @@ def get_ids():
 def ingredient_exists(name):
     return db.session.execute("SELECT 1 FROM Ingredients WHERE LOWER(name)=:name",
                               {"name": name.lower()}).fetchone()
+
+
+def get_by_id(id):
+    return db.session.execute("SELECT id, name, type FROM Ingredients WHERE id=:id",
+                              {"id": id}).fetchone()
