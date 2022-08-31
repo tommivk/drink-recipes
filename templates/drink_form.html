@@ -122,9 +122,9 @@
                 imageInput.value = ""
                 return
             }
-            if (file.type != "image/jpeg") {
+            if (file.type != "image/jpeg" && file.type != "image/png") {
                 imageError.classList.remove("hidden")
-                imageError.innerText = "Image type must be jpeg"
+                imageError.innerText = "Image type must be jpeg or png"
                 imageInput.value = ""
                 return
             }

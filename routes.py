@@ -160,7 +160,8 @@ def drinks_post():
     if len(recipe) < 10 or len(recipe) > 2000:
         return "Instructions must be between 10 and 2000 characters long"
 
-    if not file.filename.endswith(".jpg"):
+    filename = file.filename
+    if not (filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png")):
         return "Invalid filetype"
 
     image_data = file.read()
@@ -407,7 +408,8 @@ def update_profile(username):
 
     image_data = file.read()
 
-    if not file.filename.endswith(".jpg"):
+    filename = file.filename
+    if not (filename.endswith(".jpg") or filename.endswith(".jpeg") or filename.endswith(".png")):
         return "Invalid filetype"
 
     if len(image_data) > 200*1024:

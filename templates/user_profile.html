@@ -79,9 +79,9 @@
                 avatarError.innerText = "Maximum filesize is 200kB"
                 return
             }
-            if (file.type != "image/jpeg") {
+            if (file.type != "image/jpeg" && file.type != "image/png") {
                 avatarError.classList.remove("hidden")
-                avatarError.innerText = "Image type must be jpeg"
+                avatarError.innerText = "Image type must be jpeg or png"
                 return
             }
 
