@@ -22,3 +22,8 @@ def add_ingredient(name, type):
 
 def get_ids():
     return db.session.execute("SELECT id FROM ingredients").fetchall()
+
+
+def ingredient_exists(name):
+    return db.session.execute("SELECT 1 FROM Ingredients WHERE LOWER(name)=:name",
+                              {"name": name.lower()}).fetchone()

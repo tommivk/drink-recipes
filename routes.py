@@ -115,6 +115,10 @@ def indgredients_post():
     name = request.form["name"]
     type = request.form["type"]
 
+    if ingredients.ingredient_exists(name):
+        flash("Ingredient already exists", "error")
+        return redirect(request.referrer)
+
     if ingredients.add_ingredient(name, type):
         flash(f"New ingredient \"{name}\" added!")
 
