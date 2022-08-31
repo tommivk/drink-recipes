@@ -3,22 +3,25 @@
 
 {% block content %}
 <div class="container">
-    <h1>Admin</h1>
+    <h1 class="title">Admin</h1>
 
-    Add new drink category
-    <form action="/drinks/categories" method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
-        <input type="text" placeholder="name" name="name" />
-        <input type="text" placeholder="description" name="description" />
-        <button type="submit">Add</button>
-    </form>
-
-    Add new ingredient
-    <form action="/ingredients" method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <input type="text" placeholder="name" name="name" />
-        <input type="text" placeholder="type" name="type" />
-        <button type="submit">Add</button>
-    </form>
+    <h2 class="title">Add new drink category</h2>
+    <div class="form-container admin-form">
+        <form action="/drinks/categories" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}" />
+            <input type="text" placeholder="name" name="name" required />
+            <input type="text" placeholder="description (optional)" name="description" />
+            <button class="btn" type="submit">Add</button>
+        </form>
+    </div>
+    <h2 class="title">Add new ingredient</h2>
+    <div class="form-container admin-form">
+        <form action="/ingredients" method="post">
+            <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+            <input type="text" placeholder="name" name="name" required />
+            <input type="text" placeholder="type (optional)" name="type" />
+            <button class="btn" type="submit">Add</button>
+        </form>
+    </div>
 </div>
 {% endblock %}
