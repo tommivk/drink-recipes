@@ -99,6 +99,8 @@
 }
 
 #profile-avatar img {
+    position: relative;
+    z-index: 50;
     border-radius: 50%;
     object-fit: cover;
     height: 100%;
@@ -165,4 +167,14 @@
 #avatar-delete-btn:focus {
     border: 1px solid rgb(139, 138, 138);
     cursor: pointer;
+}
+
+.default-avatar {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4em;
+    color: rgb(158, 152, 152);
+    z-index: 2;
 }

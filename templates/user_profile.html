@@ -18,6 +18,7 @@
                     <img id="avatar-img" src="{{ url_for('serve_img', id=user_data.avatar_id)}}">
                     {% else %}
                     <img id="avatar-img" src="">
+                    <div class="default-avatar"><i class="fa-solid fa-user"></i></div>
                     {% endif %}
                 </label>
                 <input type="file" accept="image/*" name="picture" id="avatarInput" />
