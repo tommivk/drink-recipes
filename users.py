@@ -90,7 +90,7 @@ def is_logged_user(username):
 def get_non_favourited_ingredients():
     user_id = session["user_id"]
     return db.session.execute(
-        '''SELECT * FROM Ingredients
+        '''SELECT id, name, type FROM Ingredients
             WHERE id NOT IN (SELECT ingredient_id FROM UsersIngredients WHERE user_id=:user_id)
             ORDER BY name
         ''', {"user_id": user_id}).fetchall()
@@ -99,7 +99,7 @@ def get_non_favourited_ingredients():
 def get_users_ingredients():
     user_id = session["user_id"]
     return db.session.execute(
-        '''SELECT * FROM UsersIngredients U
+        '''SELECT U.ingredient_id as id, I.name as name FROM UsersIngredients U
             JOIN Ingredients I ON U.ingredient_id=I.id
             WHERE U.user_id=:user_id
         ''', {"user_id": user_id}).fetchall()

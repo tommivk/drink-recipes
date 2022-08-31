@@ -3,7 +3,7 @@ from db import db
 
 def get_all():
     return db.session.execute(
-        "SELECT * FROM Ingredients ORDER BY name").fetchall()
+        "SELECT id, name, type FROM Ingredients ORDER BY name").fetchall()
 
 
 def get_names():
