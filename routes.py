@@ -238,7 +238,7 @@ def add_drink_category():
 
     if drinks.add_category(name, description):
         flash(f"New category \"{name}\" added!")
-        return redirect("/drinks")
+        return redirect(request.referrer)
 
     return abort(500)
 
