@@ -15,32 +15,31 @@ You can sign up to create a new user account or login with the following credent
 
 ## Features
 ### User features
-- User can create a new user account (done)
-- User can login and logout (done)
-- User can add a new drink recipe (done)
-- User can view the list of uploaded drink recipes (done)
+- User can create a new user account
+- User can login and logout 
+- User can add a new drink recipe 
+- User can view the list of uploaded drink recipes
 - User can sort the list of drink recipes by rating/amount of views/date
-- User can open an individual drink recipe page (done)
-- User can leave a review (stars) for a recipe (done)
-- User can leave a comment for a recipe (done)
-- User can add drink recipe to favourites (done)
-- User can view their own profile page and browse the list of their favourite drinks (done)
-- User can remove drink recipes from favourites (done)
-- User can add ingredients to their ingredient list (done)
-- User can browse drinks that can be made using the ingredients that the user has added to their ingredient list (done)
-- User can delete drink recipes that they uploaded (done)
-- User can delete comments that they added (done)
-- User can add a profile picture (done)
-- User can change their profile picture (done)
-- User can delete their profile picture (done)
-- User can delete their own account  
+- User can open an individual drink recipe page 
+- User can leave a review (stars) for a recipe 
+- User can leave a comment for a recipe 
+- User can add drink recipe to favourites 
+- User can view their own profile page and browse the list of their favourite drinks 
+- User can remove drink recipes from favourites 
+- User can add ingredients to their ingredient list 
+- User can browse drinks that can be made using the ingredients that the user has added to their ingredient list 
+- User can delete drink recipes that they uploaded 
+- User can delete comments that they added 
+- User can add a profile picture 
+- User can change their profile picture 
+- User can delete their profile picture
+
 
 ### Admin features
 
-- Admin can add new ingredients (done)
-- Admin can add new drink categories (done)
-- Admin can delete drink recipes (done)
-- Admin can delete comments (done)
-- Admin can delete profile pictures (done)
-- Admin can delete users
-- Admin can delete ingredients
+- Admin can add new ingredients
+- Admin can add new drink categories
+- Admin can delete drink recipes 
+- Admin can delete comments 
+- Admin can delete profile pictures 
+
