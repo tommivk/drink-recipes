@@ -14,7 +14,7 @@ CREATE TABLE Users (
 
 CREATE TABLE DrinkCategories(
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name TEXT UNIQUE,
     description TEXT
 );
 
@@ -38,7 +38,7 @@ CREATE TABLE FavouriteDrinks (
 
 CREATE TABLE Ingredients(
     id SERIAL PRIMARY KEY,
-    name TEXT,
+    name TEXT UNIQUE,
     type TEXT
 );
 
