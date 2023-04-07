@@ -3,7 +3,7 @@
 An app where users can discover drink recipes of various categories. Users can add new recipes and rate and comment the existing ones. There is also a feature where users can add ingredients to their own list and browse drinks that can be made using them.
 
 ## App
-The app is available at https://drink-recipes.onrender.com
+The app is available at https://drink-recipes.fly.dev/
 
 ### Credentials
 You can sign up to create a new user account or login with the following credentials:
